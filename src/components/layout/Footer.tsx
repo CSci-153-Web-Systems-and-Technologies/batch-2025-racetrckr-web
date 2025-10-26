@@ -24,7 +24,7 @@ export default function Footer() {
               href="https://github.com/jaaseiadev" 
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-primary transition-colors"
+              className="hover:text-[#fc4c02] transition-colors"
               aria-label="GitHub">
               <Github className="h-5 w-5" />
             </a>
@@ -32,7 +32,7 @@ export default function Footer() {
               href="https://facebook.com" 
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-primary transition-colors"
+              className="hover:text-[#fc4c02] transition-colors"
               aria-label="Facebook">
               <Facebook className="h-5 w-5" />
             </a>
@@ -40,7 +40,7 @@ export default function Footer() {
               href="https://linkedin.com/jaaseia" 
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-primary transition-colors"
+              className="hover:text-[#fc4c02] transition-colors"
               aria-label="LinkedIn">
               <Linkedin className="h-5 w-5" />
             </a>
