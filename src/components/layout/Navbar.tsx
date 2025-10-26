@@ -29,20 +29,20 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-15">
-            <Link href="/dashboard" className="text-black-700 hover:text-gray-900 transition-colors">
+            <Link href="/dashboard" className="text-black-700 hover:text-[#fc4c02] transition-colors font-medium">
               Dashboard
             </Link>
-            <Link href="/find-races" className="text-black-700 hover:text-gray-900 transition-colors">
+            <Link href="/find-races" className="text-black-700 hover:text-[#fc4c02] transition-colors font-medium">
               Find Races
             </Link>
-            <Link href="/add-race" className="text-black-700 hover:text-gray-900 transition-colors">
+            <Link href="/add-race" className="text-black-700 hover:text-[#fc4c02] transition-colors font-medium">
               Add Race
             </Link>
           </div>
 
           {/* Desktop Logout Button */}
           <div className="hidden lg:block">
-            <Button variant="outline">
+            <Button variant="outline" className="hover:bg-red-50 hover:text-red-600 hover:border-red-600 transition-colors">
               <LogOut />
               Logout
             </Button>
@@ -64,26 +64,26 @@ export default function Navbar() {
             <div className="flex flex-col gap-2">
               <Link 
                 href="/dashboard" 
-                className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                className="px-4 py-2 text-gray-700 hover:text-[#fc4c02] hover:bg-orange-50 rounded-md transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Dashboard
               </Link>
               <Link 
                 href="/find-races" 
-                className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                className="px-4 py-2 text-gray-700 hover:text-[#fc4c02] hover:bg-orange-50 rounded-md transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Find Races
               </Link>
               <Link 
                 href="/add-race" 
-                className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                className="px-4 py-2 text-gray-700 hover:text-[#fc4c02] hover:bg-orange-50 rounded-md transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Add Race
               </Link>
-              <Button variant="outline" className="w-full justify-start">
+              <Button variant="outline" className="w-full justify-start hover:bg-red-50 hover:text-red-600 hover:border-red-600 transition-colors">
                 <LogOut />
                 Logout
               </Button>
