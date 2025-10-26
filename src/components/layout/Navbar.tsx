@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,23 +28,24 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-6">
-            <Link href="/dashboard" className="text-gray-700 hover:text-gray-900 transition-colors">
+          <div className="hidden lg:flex items-center gap-15">
+            <Link href="/dashboard" className="text-black-700 hover:text-gray-900 transition-colors">
               Dashboard
             </Link>
-            <Link href="/find-races" className="text-gray-700 hover:text-gray-900 transition-colors">
+            <Link href="/find-races" className="text-black-700 hover:text-gray-900 transition-colors">
               Find Races
             </Link>
-            <Link href="/add-race" className="text-gray-700 hover:text-gray-900 transition-colors">
+            <Link href="/add-race" className="text-black-700 hover:text-gray-900 transition-colors">
               Add Race
             </Link>
           </div>
 
           {/* Desktop Logout Button */}
           <div className="hidden lg:block">
-            <button className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors">
+            <Button variant="outline">
+              <LogOut />
               Logout
-            </button>
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -81,9 +83,10 @@ export default function Navbar() {
               >
                 Add Race
               </Link>
-              <button className="px-4 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors text-left">
+              <Button variant="outline" className="w-full justify-start">
+                <LogOut />
                 Logout
-              </button>
+              </Button>
             </div>
           </div>
         )}
