@@ -7,19 +7,24 @@ interface Achievement {
   raceName: string;
 }
 
-interface BestEffortsCardProps {
+interface BestEffortsDesktopProps {
   achievements: Achievement[];
+  userName: string;
 }
 
-export default function BestEffortsCard({ achievements }: BestEffortsCardProps) {
+export default function BestEffortsDesktop({ achievements, userName }: BestEffortsDesktopProps) {
   return (
-    <div className="mb-8">
-      <h2 className="text-[32px] leading-tight mb-6">
+    <div>
+      <h2 className="text-3xl lg:text-4xl font-semibold mb-6">
         Your <span className="text-[#fc4c02]">Best Efforts</span>
       </h2>
 
-      <div className="bg-white border border-gray-200 rounded-3xl shadow-lg p-8">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+      <div className="bg-white border border-gray-200 rounded-3xl shadow-sm p-6 lg:p-8">
+        <div className="text-center mb-6">
+          <h3 className="text-xl font-semibold">Way to go {userName}!</h3>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 lg:gap-6">
           {achievements.map((achievement, index) => (
             <div key={index} className="text-center">
               <Trophy className="w-6 h-6 mx-auto mb-2 text-[#fc4c02]" />
