@@ -14,10 +14,13 @@ export default function AddRacePage() {
   const [formData, setFormData] = useState({
     name: '',
     region: '',
+    regionCode: '',
+    province: '',
+    provinceCode: '',
     cityMunicipality: '',
+    cityMunicipalityCode: '',
     distance: '',
     date: '',
-    province: '',
     baranggay: '',
     customDistance: '',
     hours: '',
@@ -33,14 +36,54 @@ export default function AddRacePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleRegionChange = (code: string, name: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      regionCode: code,
+      region: name,
+      provinceCode: '',
+      province: '',
+      cityMunicipalityCode: '',
+      cityMunicipality: '',
+      baranggay: '',
+    }));
+  };
+
+  const handleProvinceChange = (code: string, name: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      provinceCode: code,
+      province: name,
+      cityMunicipalityCode: '',
+      cityMunicipality: '',
+      baranggay: '',
+    }));
+  };
+
+  const handleCityChange = (code: string, name: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      cityMunicipalityCode: code,
+      cityMunicipality: name,
+      baranggay: '',
+    }));
+  };
+
+  const handleBarangayChange = (name: string) => {
+    setFormData((prev) => ({ ...prev, baranggay: name }));
+  };
+
   const handleReset = () => {
     setFormData({
       name: '',
       region: '',
+      regionCode: '',
+      province: '',
+      provinceCode: '',
       cityMunicipality: '',
+      cityMunicipalityCode: '',
       distance: '',
       date: '',
-      province: '',
       baranggay: '',
       customDistance: '',
       hours: '',
@@ -69,8 +112,11 @@ export default function AddRacePage() {
             />
 
             <AddressFields 
-              formData={formData} 
-              handleInputChange={handleInputChange} 
+              formData={formData}
+              onRegionChange={handleRegionChange}
+              onProvinceChange={handleProvinceChange}
+              onCityChange={handleCityChange}
+              onBarangayChange={handleBarangayChange}
             />
 
             <DistanceFields 
