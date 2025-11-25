@@ -1,3 +1,5 @@
+'use client';
+
 import { Calendar } from 'lucide-react';
 
 interface NameDateFieldsProps {
@@ -9,6 +11,13 @@ interface NameDateFieldsProps {
 }
 
 export default function NameDateFields({ formData, handleInputChange }: NameDateFieldsProps) {
+  const handleCalendarClick = () => {
+    const dateInput = document.querySelector('input[name="date"]') as HTMLInputElement;
+    if (dateInput) {
+      dateInput.showPicker?.();
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
@@ -32,9 +41,12 @@ export default function NameDateFields({ formData, handleInputChange }: NameDate
             value={formData.date}
             onChange={handleInputChange}
             placeholder="Pick a date"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc4c02] focus:border-transparent [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-inner-spin-button]:hidden"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc4c02] focus:border-transparent cursor-pointer"
           />
-          <Calendar className="absolute right-4 top-1/2 -translate-y-1/2 text-[#fc4c02] w-5 h-5 pointer-events-none" />
+          <Calendar 
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#fc4c02] w-5 h-5 cursor-pointer" 
+            onClick={handleCalendarClick}
+          />
         </div>
       </div>
     </div>

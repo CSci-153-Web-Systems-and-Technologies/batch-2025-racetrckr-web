@@ -13,8 +13,6 @@ import FormActions from '@/components/addrace/FormActions';
 export default function AddRacePage() {
   const [formData, setFormData] = useState({
     name: '',
-    region: '',
-    regionCode: '',
     province: '',
     provinceCode: '',
     cityMunicipality: '',
@@ -22,7 +20,8 @@ export default function AddRacePage() {
     distance: '',
     date: '',
     baranggay: '',
-    customDistance: '',
+    customDistanceValue: '',
+    customDistanceUnit: '',
     hours: '',
     minutes: '',
     seconds: '',
@@ -34,19 +33,6 @@ export default function AddRacePage() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleRegionChange = (code: string, name: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      regionCode: code,
-      region: name,
-      provinceCode: '',
-      province: '',
-      cityMunicipalityCode: '',
-      cityMunicipality: '',
-      baranggay: '',
-    }));
   };
 
   const handleProvinceChange = (code: string, name: string) => {
@@ -73,11 +59,36 @@ export default function AddRacePage() {
     setFormData((prev) => ({ ...prev, baranggay: name }));
   };
 
+  const handleDistanceChange = (distance: string) => {
+    setFormData((prev) => ({ ...prev, distance }));
+  };
+
+  const handleCustomDistanceChange = (value: string, unit: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      customDistanceValue: value,
+      customDistanceUnit: unit,
+    }));
+  };
+
+  // Calculate total distance in km for pace calculator
+  const getDistanceInKm = () => {
+    if (formData.distance) {
+      return parseFloat(formData.distance);
+    }
+    if (formData.customDistanceValue && formData.customDistanceUnit) {
+      const value = parseFloat(formData.customDistanceValue);
+      if (formData.customDistanceUnit === 'miles') {
+        return value * 1.60934; // Convert miles to km
+      }
+      return value;
+    }
+    return 0;
+  };
+
   const handleReset = () => {
     setFormData({
       name: '',
-      region: '',
-      regionCode: '',
       province: '',
       provinceCode: '',
       cityMunicipality: '',
@@ -85,7 +96,8 @@ export default function AddRacePage() {
       distance: '',
       date: '',
       baranggay: '',
-      customDistance: '',
+      customDistanceValue: '',
+      customDistanceUnit: '',
       hours: '',
       minutes: '',
       seconds: '',
@@ -113,19 +125,20 @@ export default function AddRacePage() {
 
             <AddressFields 
               formData={formData}
-              onRegionChange={handleRegionChange}
               onProvinceChange={handleProvinceChange}
               onCityChange={handleCityChange}
               onBarangayChange={handleBarangayChange}
             />
 
             <DistanceFields 
-              formData={formData} 
-              handleInputChange={handleInputChange} 
+              formData={formData}
+              onDistanceChange={handleDistanceChange}
+              onCustomDistanceChange={handleCustomDistanceChange}
             />
 
             <FinishTimeFields 
-              formData={formData} 
+              formData={formData}
+              distance={getDistanceInKm()}
               handleInputChange={handleInputChange} 
             />
 
