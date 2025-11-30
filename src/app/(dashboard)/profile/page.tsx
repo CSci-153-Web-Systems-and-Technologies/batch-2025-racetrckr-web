@@ -7,16 +7,19 @@ const profileRaces = [
     id: 1,
     title: "Bohol International Marathon",
     imageUrl: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=800&q=80",
+    distance: "Full Marathon",
   },
   {
     id: 2,
     title: "Bohol International Marathon",
     imageUrl: "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80",
+    distance: "21K",
   },
   {
     id: 3,
     title: "Bohol International Marathon",
     imageUrl: "https://images.unsplash.com/photo-1565411642431-7e2c99f2d686?w=800&q=80",
+    distance: "10K",
   },
 ];
 
