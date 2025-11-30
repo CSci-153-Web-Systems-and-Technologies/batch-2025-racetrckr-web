@@ -1,7 +1,6 @@
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import RaceArchive from "@/components/profile/RaceArchive";
 import PersonalBest from "@/components/profile/PersonalBest";
-import BestEfforts from "@/components/profile/BestEfforts";
 
 const profileRaces = [
   {
@@ -90,8 +89,6 @@ export default function ProfilePage() {
         <RaceArchive races={profileRaces} />
 
         <PersonalBest efforts={bestEfforts} />
-
-        <BestEfforts efforts={bestEfforts} />
       </div>
     </div>
   );
