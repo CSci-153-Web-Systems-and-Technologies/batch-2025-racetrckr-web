@@ -34,20 +34,14 @@ export default function NameDateFields({ formData, handleInputChange }: NameDate
 
       <div>
         <label className="block text-sm font-medium mb-2">Date</label>
-        <div className="relative">
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleInputChange}
-            placeholder="Pick a date"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc4c02] focus:border-transparent cursor-pointer"
-          />
-          <Calendar 
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#fc4c02] w-5 h-5 cursor-pointer" 
-            onClick={handleCalendarClick}
-          />
-        </div>
+        <input
+          type="date"
+          name="date"
+          value={formData.date}
+          onChange={handleInputChange}
+          placeholder="Pick a date"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc4c02] focus:border-transparent cursor-pointer"
+        />
       </div>
     </div>
   );
