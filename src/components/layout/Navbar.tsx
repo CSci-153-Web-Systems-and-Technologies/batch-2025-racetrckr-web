@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { Menu, X, LogOut } from 'lucide-react';
+import { Menu, X, LogOut, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function Navbar() {
@@ -40,8 +40,11 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Logout Button */}
-          <div className="hidden lg:block">
+          {/* Desktop Profile & Logout */}
+          <div className="hidden lg:flex items-center gap-4">
+            <Link href="/profile" className="w-10 h-10 rounded-full bg-[#fc4c02] flex items-center justify-center hover:bg-[#e64602] transition-colors">
+              <User className="w-5 h-5 text-white" />
+            </Link>
             <Button variant="outline" className="hover:bg-red-50 hover:text-red-600 hover:border-red-600 transition-colors">
               <LogOut />
               Logout
@@ -77,11 +80,18 @@ export default function Navbar() {
                 Find Races
               </Link>
               <Link 
-                href="/addraace" 
+                href="/addrace" 
                 className="px-4 py-2 text-gray-700 hover:text-[#fc4c02] hover:bg-orange-50 rounded-md transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Add Race
+              </Link>
+              <Link 
+                href="/profile" 
+                className="px-4 py-2 text-gray-700 hover:text-[#fc4c02] hover:bg-orange-50 rounded-md transition-colors font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Profile
               </Link>
               <Button variant="outline" className="w-full justify-start hover:bg-red-50 hover:text-red-600 hover:border-red-600 transition-colors">
                 <LogOut />
