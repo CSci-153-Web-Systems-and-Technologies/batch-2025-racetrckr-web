@@ -36,7 +36,7 @@ export default function Navbar() {
               Find Races
             </Link>
             <Link href="/addrace" className="text-black-700 hover:text-[#fc4c02] transition-colors font-medium">
-              Add Race
+              Add Event
             </Link>
           </div>
 
@@ -84,7 +84,7 @@ export default function Navbar() {
                 className="px-4 py-2 text-gray-700 hover:text-[#fc4c02] hover:bg-orange-50 rounded-md transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Add Race
+                Add Event
               </Link>
               <Link 
                 href="/profile" 
