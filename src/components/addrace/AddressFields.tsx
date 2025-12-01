@@ -40,7 +40,7 @@ export default function AddressFields({
 
   // Fetch all provinces on mount
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || typeof window === 'undefined') return;
     
     const fetchProvinces = async () => {
       setLoading(prev => ({ ...prev, provinces: true }));
@@ -71,6 +71,7 @@ export default function AddressFields({
 
   // Fetch cities when province changes
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     if (formData.provinceCode) {
       const fetchCities = async () => {
         setLoading(prev => ({ ...prev, cities: true }));
@@ -95,6 +96,7 @@ export default function AddressFields({
 
   // Fetch barangays when city changes
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     if (formData.cityMunicipalityCode) {
       const fetchBarangays = async () => {
         setLoading(prev => ({ ...prev, barangays: true }));
