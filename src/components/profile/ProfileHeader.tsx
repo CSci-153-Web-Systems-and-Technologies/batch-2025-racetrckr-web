@@ -85,6 +85,7 @@ export default function ProfileHeader({
             userName={name}
             onAvatarUpdate={onAvatarUpdate}
             size="large"
+            showCamera={false}
           />
           
           <div className="text-center md:text-left">
