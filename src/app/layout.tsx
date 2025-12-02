@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import AuthStatus from "@/components/auth/AuthStatus";
 import { SessionManager } from "@/components/auth/SessionManager";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "RaceTrackr",
@@ -19,6 +20,7 @@ export default function RootLayout({
         <SessionManager>
           {children}
         </SessionManager>
+        <Toaster position="top-right" richColors />
         <AuthStatus />
       </body>
     </html>

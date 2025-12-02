@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import GoogleButton from './GoogleButton';
 import { createClient } from '@/lib/supabase';
+import { ButtonLoading } from './LoadingSpinner';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -20,9 +22,13 @@ export default function LoginForm() {
     // Check for error messages from redirect
     const errorParam = searchParams.get('error');
     if (errorParam === 'session_expired') {
-      setError('Your session has expired. Please sign in again.');
+      const errorMsg = 'Your session has expired. Please sign in again.';
+      setError(errorMsg);
+      toast.error(errorMsg);
     } else if (errorParam === 'auth_failed') {
-      setError('Authentication failed. Please try again.');
+      const errorMsg = 'Authentication failed. Please try again.';
+      setError(errorMsg);
+      toast.error(errorMsg);
     }
   }, [searchParams]);
 
@@ -40,14 +46,18 @@ export default function LoginForm() {
 
       if (signInError) {
         setError(signInError.message);
+        toast.error(signInError.message);
       } else if (data.user) {
         // Successfully logged in
+        toast.success('Welcome back!');
         // Check if there's a redirect parameter
         const redirect = searchParams.get('redirect') || '/dashboard';
         router.push(redirect);
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      const errorMsg = 'An unexpected error occurred';
+      setError(errorMsg);
+      toast.error(errorMsg);
       console.error('Login error:', err);
     } finally {
       setIsLoading(false);
@@ -134,9 +144,9 @@ export default function LoginForm() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-[#fc4c02] hover:bg-[#e64602] text-white py-3 h-auto"
+          className="w-full bg-[#fc4c02] hover:bg-[#e64602] text-white py-3 h-auto disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? 'Signing in...' : 'Sign in'}
+          {isLoading ? <ButtonLoading /> : 'Sign in'}
         </Button>
       </form>
 

@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import GoogleButton from './GoogleButton';
 import { createClient } from '@/lib/supabase';
+import { ButtonLoading } from './LoadingSpinner';
 
 export default function SignupForm() {
   const router = useRouter();
@@ -25,6 +27,7 @@ export default function SignupForm() {
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      toast.error('Passwords do not match');
       setIsLoading(false);
       return;
     }
@@ -44,21 +47,28 @@ export default function SignupForm() {
 
       if (signUpError) {
         setError(signUpError.message);
+        toast.error(signUpError.message);
       } else if (data.user) {
         // Check if email confirmation is required
         if (data.user.identities && data.user.identities.length === 0) {
           // Email already exists but not confirmed
-          setError('This email is already registered. Please check your inbox for verification.');
+          const errorMsg = 'This email is already registered. Please check your inbox for verification.';
+          setError(errorMsg);
+          toast.error(errorMsg);
         } else if (data.user.confirmed_at) {
           // Email confirmed, redirect to dashboard
+          toast.success('Account created successfully!');
           router.push('/dashboard');
         } else {
           // Show verification notice
+          toast.success('Verification email sent! Please check your inbox.');
           setShowVerificationNotice(true);
         }
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      const errorMsg = 'An unexpected error occurred';
+      setError(errorMsg);
+      toast.error(errorMsg);
       console.error('Signup error:', err);
     } finally {
       setIsLoading(false);
@@ -242,9 +252,9 @@ export default function SignupForm() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-[#fc4c02] hover:bg-[#e64602] text-white py-3 h-auto"
+          className="w-full bg-[#fc4c02] hover:bg-[#e64602] text-white py-3 h-auto disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? 'Creating account...' : 'Create account'}
+          {isLoading ? <ButtonLoading /> : 'Create account'}
         </Button>
       </form>
 
