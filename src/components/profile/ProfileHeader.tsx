@@ -56,42 +56,42 @@ export default function ProfileHeader({
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-6 lg:gap-8 w-full max-w-4xl mx-auto">
+        <div className="grid grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8 w-full max-w-4xl mx-auto">
           {/* Total Races */}
           <div className="text-center">
-            <h3 className="text-sm font-medium text-gray-600 mb-3">Total Races</h3>
-            <div className="text-[80px] leading-none font-normal">{totalRaces}</div>
+            <h3 className="text-xs sm:text-sm font-medium text-gray-600 mb-2 sm:mb-3">Total Races</h3>
+            <div className="text-[48px] sm:text-[60px] md:text-[80px] leading-none font-normal">{totalRaces}</div>
           </div>
 
           {/* Total Distance */}
           <div className="text-center">
-            <h3 className="text-sm font-medium text-gray-600 mb-3">Total Distance</h3>
-            <div className="text-[80px] leading-none font-normal">
-              {totalDistance}<span className="text-[#fc4c02] text-[20px]">KM</span>
+            <h3 className="text-xs sm:text-sm font-medium text-gray-600 mb-2 sm:mb-3">Total Distance</h3>
+            <div className="text-[48px] sm:text-[60px] md:text-[80px] leading-none font-normal">
+              {totalDistance}<span className="text-[#fc4c02] text-[16px] sm:text-[18px] md:text-[20px]">KM</span>
             </div>
           </div>
 
           {/* Time on Feet */}
           <div className="text-center">
-            <h3 className="text-sm font-medium text-gray-600 mb-3">Time on Feet</h3>
-            <div className="space-y-1">
-              <div className="flex items-baseline justify-center gap-2">
-                <span className="text-[#fc4c02] text-[28px] leading-none">
+            <h3 className="text-xs sm:text-sm font-medium text-gray-600 mb-2 sm:mb-3">Time on Feet</h3>
+            <div className="space-y-0.5 sm:space-y-1">
+              <div className="flex items-baseline justify-center gap-1 sm:gap-2">
+                <span className="text-[#fc4c02] text-[20px] sm:text-[24px] md:text-[28px] leading-none">
                   {String(timeOnFeet.hours).padStart(2, '0')}
                 </span>
-                <span className="text-gray-500 text-[13px]">Hours</span>
+                <span className="text-gray-500 text-[10px] sm:text-[11px] md:text-[13px]">Hours</span>
               </div>
-              <div className="flex items-baseline justify-center gap-2">
-                <span className="text-[#fc4c02] text-[28px] leading-none">
+              <div className="flex items-baseline justify-center gap-1 sm:gap-2">
+                <span className="text-[#fc4c02] text-[20px] sm:text-[24px] md:text-[28px] leading-none">
                   {String(timeOnFeet.minutes).padStart(2, '0')}
                 </span>
-                <span className="text-gray-500 text-[13px]">Minutes</span>
+                <span className="text-gray-500 text-[10px] sm:text-[11px] md:text-[13px]">Minutes</span>
               </div>
-              <div className="flex items-baseline justify-center gap-2">
-                <span className="text-[#fc4c02] text-[28px] leading-none">
+              <div className="flex items-baseline justify-center gap-1 sm:gap-2">
+                <span className="text-[#fc4c02] text-[20px] sm:text-[24px] md:text-[28px] leading-none">
                   {String(timeOnFeet.seconds).padStart(2, '0')}
                 </span>
-                <span className="text-gray-500 text-[13px]">Seconds</span>
+                <span className="text-gray-500 text-[10px] sm:text-[11px] md:text-[13px]">Seconds</span>
               </div>
             </div>
           </div>
