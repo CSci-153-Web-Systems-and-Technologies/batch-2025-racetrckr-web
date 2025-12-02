@@ -12,28 +12,39 @@ interface MyRacesModalProps {
 
 const MyRacesModal = ({ isOpen, onClose }: MyRacesModalProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
+  
+  // Mock race dates for testing countdown
+  const mockRace1 = new Date();
+  mockRace1.setMinutes(mockRace1.getMinutes() + 3); // 3 minutes from now
+  
+  const mockRace2 = new Date();
+  mockRace2.setHours(mockRace2.getHours() + 2); // 2 hours from now
+  
+  const mockRace3 = new Date();
+  mockRace3.setDate(mockRace3.getDate() + 1); // 1 day from now
+  
   const [attendingRaces, setAttendingRaces] = useState([
     {
       id: '1',
-      title: 'Maasin Marathon 2025',
+      title: 'Maasin Marathon 2025 (Test: 3 mins)',
       location: 'Maasin City, Southern Leyte',
-      date: new Date('2025-05-07'),
+      date: mockRace1,
       distance: 'Marathon',
       imageUrl: 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=400&h=300&fit=crop'
     },
     {
       id: '2',
-      title: 'City Fun Run',
+      title: 'City Fun Run (Test: 2 hours)',
       location: 'Manila, Philippines',
-      date: new Date('2025-06-15'),
+      date: mockRace2,
       distance: '10km',
       imageUrl: 'https://images.unsplash.com/photo-1513593771513-7b58b6c4af38?w=400&h=300&fit=crop'
     },
     {
       id: '3',
-      title: 'Mountain Trail Challenge',
+      title: 'Mountain Trail Challenge (Test: 1 day)',
       location: 'Baguio City, Benguet',
-      date: new Date('2025-07-20'),
+      date: mockRace3,
       distance: 'Ultra Marathon',
       imageUrl: 'https://images.unsplash.com/photo-1472148439583-2f0b5e2d0351?w=400&h=300&fit=crop'
     }
