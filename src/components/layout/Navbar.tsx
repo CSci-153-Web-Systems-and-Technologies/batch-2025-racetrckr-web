@@ -3,18 +3,28 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { Menu, X, LogOut, User } from 'lucide-react';
 import LogoutModal from '@/components/navbar/LogoutModal';
+import { createClient } from '@/lib/supabase';
 
 export default function Navbar() {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const handleLogout = () => {
-    // Add your logout logic here (e.g., clear session, redirect to login)
-    console.log('User logged out');
-    setShowLogoutModal(false);
-    // Example: router.push('/login');
+  const handleLogout = async () => {
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      setShowLogoutModal(false);
+      toast.success('Logged out successfully');
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Failed to log out. Please try again.');
+    }
   };
 
   return (

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { createClient } from '@/lib/supabase';
 
 interface GoogleButtonProps {
   mode?: 'login' | 'signup';
@@ -11,13 +12,26 @@ export default function GoogleButton({ mode = 'login' }: GoogleButtonProps) {
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    
-    // TODO: Implement Supabase Google OAuth
-    console.log('Google sign in clicked');
-    
-    setTimeout(() => {
+
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        console.error('Google sign-in error:', error.message);
+        setIsLoading(false);
+      }
+      // Note: If successful, user will be redirected to Google
+      // setIsLoading remains true during redirect
+    } catch (err) {
+      console.error('Unexpected error:', err);
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (

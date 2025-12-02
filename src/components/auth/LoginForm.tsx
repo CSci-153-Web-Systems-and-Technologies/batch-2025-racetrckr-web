@@ -1,28 +1,67 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import GoogleButton from './GoogleButton';
+import { createClient } from '@/lib/supabase';
+import { ButtonLoading } from './LoadingSpinner';
 
 export default function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    // Check for error messages from redirect
+    const errorParam = searchParams.get('error');
+    if (errorParam === 'session_expired') {
+      const errorMsg = 'Your session has expired. Please sign in again.';
+      setError(errorMsg);
+      toast.error(errorMsg);
+    } else if (errorParam === 'auth_failed') {
+      const errorMsg = 'Authentication failed. Please try again.';
+      setError(errorMsg);
+      toast.error(errorMsg);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
-    // TODO: Implement Supabase login
-    console.log('Login with:', email, password);
-    
-    setTimeout(() => {
+    try {
+      const supabase = createClient();
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        setError(signInError.message);
+        toast.error(signInError.message);
+      } else if (data.user) {
+        // Successfully logged in
+        toast.success('Welcome back!');
+        // Check if there's a redirect parameter
+        const redirect = searchParams.get('redirect') || '/dashboard';
+        router.push(redirect);
+      }
+    } catch (err) {
+      const errorMsg = 'An unexpected error occurred';
+      setError(errorMsg);
+      toast.error(errorMsg);
+      console.error('Login error:', err);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -52,13 +91,6 @@ export default function LoginForm() {
           <span className="bg-white px-2 text-gray-500">Or continue with email</span>
         </div>
       </div>
-
-      {/* Error Message */}
-      {error && (
-        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
-          {error}
-        </div>
-      )}
 
       {/* Login Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -105,9 +137,9 @@ export default function LoginForm() {
         <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-[#fc4c02] hover:bg-[#e64602] text-white py-3 h-auto"
+          className="w-full bg-[#fc4c02] hover:bg-[#e64602] text-white py-3 h-auto disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? 'Signing in...' : 'Sign in'}
+          {isLoading ? <ButtonLoading /> : 'Sign in'}
         </Button>
       </form>
 
