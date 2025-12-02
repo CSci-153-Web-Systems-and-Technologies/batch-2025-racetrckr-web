@@ -2,17 +2,51 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { Menu, X, LogOut, User } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
 import LogoutModal from '@/components/navbar/LogoutModal';
 import { createClient } from '@/lib/supabase';
+import { getAvatarUrl, getInitials } from '@/lib/avatar';
+
+interface UserProfile {
+  id: string;
+  first_name: string | null;
+  avatar_url: string | null;
+  google_avatar_url: string | null;
+}
 
 export default function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) return;
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id, first_name, avatar_url, google_avatar_url')
+          .eq('id', user.id)
+          .single();
+
+        if (profile) {
+          setUserProfile(profile);
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -60,8 +94,22 @@ export default function Navbar() {
 
           {/* Desktop Profile & Logout */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link href="/profile" className="w-10 h-10 rounded-full bg-[#fc4c02] flex items-center justify-center hover:bg-[#e64602] transition-colors">
-              <User className="w-5 h-5 text-white" />
+            <Link 
+              href="/profile" 
+              className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 hover:border-[#fc4c02] transition-colors"
+            >
+              {userProfile && getAvatarUrl(userProfile.avatar_url, userProfile.google_avatar_url) ? (
+                <Image
+                  src={getAvatarUrl(userProfile.avatar_url, userProfile.google_avatar_url)!}
+                  alt={userProfile.first_name || 'User'}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-[#fc4c02] text-white text-sm font-bold">
+                  {userProfile ? getInitials(userProfile.first_name || 'U') : 'U'}
+                </div>
+              )}
             </Link>
             <button 
               onClick={() => setShowLogoutModal(true)}
@@ -109,10 +157,24 @@ export default function Navbar() {
               </Link>
               <Link 
                 href="/profile" 
-                className="px-4 py-2 text-gray-700 hover:text-[#fc4c02] hover:bg-orange-50 rounded-md transition-colors font-medium"
+                className="px-4 py-2 flex items-center gap-3 text-gray-700 hover:text-[#fc4c02] hover:bg-orange-50 rounded-md transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Profile
+                <div className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-gray-200 flex-shrink-0">
+                  {userProfile && getAvatarUrl(userProfile.avatar_url, userProfile.google_avatar_url) ? (
+                    <Image
+                      src={getAvatarUrl(userProfile.avatar_url, userProfile.google_avatar_url)!}
+                      alt={userProfile.first_name || 'User'}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-[#fc4c02] text-white text-xs font-bold">
+                      {userProfile ? getInitials(userProfile.first_name || 'U') : 'U'}
+                    </div>
+                  )}
+                </div>
+                <span>Profile</span>
               </Link>
               <div className="mt-2 pt-2 border-t border-gray-200">
                 <button 
