@@ -49,8 +49,8 @@ export default function AttendingRaceCard({
 
   return (
     <div className="bg-white border border-[#fc4c02]/31 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-      <div className="flex gap-4 p-4">
-        <div className="w-32 h-32 flex-shrink-0 rounded-md overflow-hidden">
+      <div className="flex flex-col sm:flex-row gap-4 p-4">
+        <div className="w-full sm:w-32 h-48 sm:h-32 flex-shrink-0 rounded-md overflow-hidden">
           <img
             src={imageUrl}
             alt={title}
@@ -61,8 +61,8 @@ export default function AttendingRaceCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-2">
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold truncate">{title}</h3>
-              <p className="text-sm text-gray-600">{location}</p>
+              <h3 className="text-base sm:text-lg font-semibold line-clamp-2">{title}</h3>
+              <p className="text-sm text-gray-600 truncate">{location}</p>
               <p className="text-xs text-gray-500 mt-1">{date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
             </div>
             <button
@@ -80,21 +80,21 @@ export default function AttendingRaceCard({
             </span>
           </div>
 
-          <div className="flex gap-2">
-            <div className="border border-[#fc4c02] rounded-lg px-3 py-1.5 text-center min-w-[60px]">
-              <div className="text-2xl font-bold leading-none text-[#fc4c02]">
+          <div className="grid grid-cols-3 gap-2">
+            <div className="border border-[#fc4c02] rounded-lg px-2 py-1.5 text-center">
+              <div className="text-xl sm:text-2xl font-bold leading-none text-[#fc4c02]">
                 {String(timeLeft.days).padStart(2, '0')}
               </div>
               <div className="text-[10px] text-gray-600 mt-0.5">Days</div>
             </div>
-            <div className="border border-[#fc4c02] rounded-lg px-3 py-1.5 text-center min-w-[60px]">
-              <div className="text-2xl font-bold leading-none text-[#fc4c02]">
+            <div className="border border-[#fc4c02] rounded-lg px-2 py-1.5 text-center">
+              <div className="text-xl sm:text-2xl font-bold leading-none text-[#fc4c02]">
                 {String(timeLeft.hours).padStart(2, '0')}
               </div>
               <div className="text-[10px] text-gray-600 mt-0.5">Hours</div>
             </div>
-            <div className="border border-[#fc4c02] rounded-lg px-3 py-1.5 text-center min-w-[60px]">
-              <div className="text-2xl font-bold leading-none text-[#fc4c02]">
+            <div className="border border-[#fc4c02] rounded-lg px-2 py-1.5 text-center">
+              <div className="text-xl sm:text-2xl font-bold leading-none text-[#fc4c02]">
                 {String(timeLeft.minutes).padStart(2, '0')}
               </div>
               <div className="text-[10px] text-gray-600 mt-0.5">Mins</div>
