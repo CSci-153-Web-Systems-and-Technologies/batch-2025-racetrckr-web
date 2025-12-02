@@ -4,10 +4,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import { Menu, X, LogOut, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import LogoutModal from '@/components/navbar/LogoutModal';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogout = () => {
+    // Add your logout logic here (e.g., clear session, redirect to login)
+    console.log('User logged out');
+    setShowLogoutModal(false);
+    // Example: router.push('/login');
+  };
 
   return (
     <nav className="bg-white shadow-sm border-b">
@@ -46,7 +54,7 @@ export default function Navbar() {
               <User className="w-5 h-5 text-white" />
             </Link>
             <button 
-              onClick={() => {/* Add logout logic here */}}
+              onClick={() => setShowLogoutModal(true)}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-gray-200 hover:border-red-200"
             >
               <LogOut className="w-4 h-4" />
@@ -98,7 +106,10 @@ export default function Navbar() {
               </Link>
               <div className="mt-2 pt-2 border-t border-gray-200">
                 <button 
-                  onClick={() => {/* Add logout logic here */}}
+                  onClick={() => {
+                    setShowLogoutModal(true);
+                    setIsMenuOpen(false);
+                  }}
                   className="w-full flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-gray-200 hover:border-red-200"
                 >
                   <LogOut className="w-4 h-4" />
@@ -109,6 +120,12 @@ export default function Navbar() {
           </div>
         )}
       </div>
+
+      <LogoutModal 
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+      />
     </nav>
   );
 }
