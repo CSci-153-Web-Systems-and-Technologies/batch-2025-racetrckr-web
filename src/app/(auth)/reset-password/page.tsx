@@ -60,8 +60,10 @@ export default function ResetPasswordPage() {
         setError(updateError.message);
         toast.error(updateError.message);
       } else {
-        toast.success('Password updated successfully!');
-        router.push('/dashboard');
+        toast.success('Password updated successfully! Please sign in with your new password.');
+        // Sign out the user so they can login with new password
+        await supabase.auth.signOut();
+        router.push('/login');
       }
     } catch (err) {
       console.error('Password reset error:', err);
@@ -71,6 +73,14 @@ export default function ResetPasswordPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleBackToLogin = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const supabase = createClient();
+    // Sign out the user before going back to login
+    await supabase.auth.signOut();
+    router.push('/login');
   };
 
   return (
@@ -146,9 +156,12 @@ export default function ResetPasswordPage() {
         {/* Back to Login */}
         <p className="text-center text-sm text-gray-600">
           Remember your password?{' '}
-          <Link href="/login" className="text-[#fc4c02] font-semibold hover:underline">
+          <button 
+            onClick={handleBackToLogin}
+            className="text-[#fc4c02] font-semibold hover:underline"
+          >
             Sign in
-          </Link>
+          </button>
         </p>
       </div>
     </div>
