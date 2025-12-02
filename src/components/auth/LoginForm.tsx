@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -10,10 +10,21 @@ import { createClient } from '@/lib/supabase';
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    // Check for error messages from redirect
+    const errorParam = searchParams.get('error');
+    if (errorParam === 'session_expired') {
+      setError('Your session has expired. Please sign in again.');
+    } else if (errorParam === 'auth_failed') {
+      setError('Authentication failed. Please try again.');
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +42,9 @@ export default function LoginForm() {
         setError(signInError.message);
       } else if (data.user) {
         // Successfully logged in
-        router.push('/dashboard');
+        // Check if there's a redirect parameter
+        const redirect = searchParams.get('redirect') || '/dashboard';
+        router.push(redirect);
       }
     } catch (err) {
       setError('An unexpected error occurred');
