@@ -18,6 +18,7 @@ interface AvatarUploadProps {
   googleAvatarUrl?: string | null;
   userName?: string;
   onAvatarUpdate?: (newUrl: string | null) => void;
+  size?: 'default' | 'large';
 }
 
 export default function AvatarUpload({
@@ -26,6 +27,7 @@ export default function AvatarUpload({
   googleAvatarUrl,
   userName = 'User',
   onAvatarUpdate,
+  size = 'default',
 }: AvatarUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -118,11 +120,17 @@ export default function AvatarUpload({
     }
   };
 
+  const avatarSize = size === 'large' ? 'w-32 h-32' : 'w-32 h-32';
+  const textSize = size === 'large' ? 'text-4xl' : 'text-3xl';
+  const cameraIconSize = size === 'large' ? 'w-10 h-10' : 'w-8 h-8';
+  const badgeSize = size === 'large' ? 'p-3' : 'p-2';
+  const badgeIconSize = size === 'large' ? 'w-6 h-6' : 'w-5 h-5';
+
   return (
     <>
       {/* Avatar Display */}
       <div className="relative group">
-        <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-200 border-4 border-white shadow-lg">
+        <div className={`relative ${avatarSize} rounded-full overflow-hidden bg-gray-200 border-4 border-gray-100 shadow-lg flex-shrink-0`}>
           {displayAvatar ? (
             <Image
               src={displayAvatar}
@@ -131,7 +139,7 @@ export default function AvatarUpload({
               className="object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-[#fc4c02] text-white text-3xl font-bold">
+            <div className={`w-full h-full flex items-center justify-center bg-[#fc4c02] text-white ${textSize} font-bold`}>
               {initials}
             </div>
           )}
@@ -143,16 +151,16 @@ export default function AvatarUpload({
           className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
           disabled={isUploading || isDeleting}
         >
-          <Camera className="w-8 h-8 text-white" />
+          <Camera className={`${cameraIconSize} text-white`} />
         </button>
 
         {/* Camera Icon Badge */}
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="absolute bottom-0 right-0 p-2 bg-[#fc4c02] rounded-full shadow-lg hover:bg-[#e64602] transition-colors"
+          className={`absolute bottom-0 right-0 ${badgeSize} bg-[#fc4c02] rounded-full shadow-lg hover:bg-[#e64602] transition-colors`}
           disabled={isUploading || isDeleting}
         >
-          <Camera className="w-5 h-5 text-white" />
+          <Camera className={`${badgeIconSize} text-white`} />
         </button>
 
         {/* Hidden File Input */}

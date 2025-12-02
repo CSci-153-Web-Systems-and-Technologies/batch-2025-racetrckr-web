@@ -1,11 +1,13 @@
 import { Edit, Share2 } from "lucide-react";
-import Image from "next/image";
+import AvatarUpload from "./AvatarUpload";
 
 interface ProfileHeaderProps {
+  userId: string;
   name: string;
   location: string;
   bio: string;
   imageUrl: string;
+  googleAvatarUrl: string;
   totalRaces: number;
   totalDistance: number;
   timeOnFeet: {
@@ -13,16 +15,20 @@ interface ProfileHeaderProps {
     minutes: number;
     seconds: number;
   };
+  onAvatarUpdate: (newAvatarUrl: string | null) => void;
 }
 
 export default function ProfileHeader({
+  userId,
   name,
   location,
   bio,
   imageUrl,
+  googleAvatarUrl,
   totalRaces,
   totalDistance,
   timeOnFeet,
+  onAvatarUpdate,
 }: ProfileHeaderProps) {
   return (
     <div className="bg-white rounded-3xl border border-[#fc4c02]/31 shadow-sm p-8 mb-8 relative">
@@ -39,14 +45,14 @@ export default function ProfileHeader({
       <div className="flex flex-col gap-8">
         {/* Profile Image and Info */}
         <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
-          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-100 flex-shrink-0 relative">
-            <Image
-              src={imageUrl}
-              alt={name}
-              fill
-              className="object-cover"
-            />
-          </div>
+          <AvatarUpload
+            userId={userId}
+            currentAvatarUrl={imageUrl}
+            googleAvatarUrl={googleAvatarUrl}
+            userName={name}
+            onAvatarUpdate={onAvatarUpdate}
+            size="large"
+          />
           
           <div className="text-center md:text-left">
             <h1 className="text-3xl font-bold text-[#fc4c02] mb-1">{name}</h1>

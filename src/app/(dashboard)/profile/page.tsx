@@ -1,6 +1,22 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase';
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import RaceArchive from "@/components/profile/RaceArchive";
 import PersonalBest from "@/components/profile/PersonalBest";
+import { FullPageLoading } from '@/components/auth/shared/LoadingSpinner';
+
+interface UserProfile {
+  id: string;
+  email: string;
+  first_name: string | null;
+  last_name: string | null;
+  location: string | null;
+  bio: string | null;
+  avatar_url: string | null;
+  google_avatar_url: string | null;
+}
 
 const profileRaces = [
   {
@@ -72,14 +88,92 @@ const bestEfforts = [
 ];
 
 export default function ProfilePage() {
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const supabase = createClient();
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+        if (userError || !user) {
+          console.error('Error fetching user:', userError);
+          setLoading(false);
+          return;
+        }
+
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+        } else {
+          setProfile(profileData);
+        }
+      } catch (error) {
+        console.error('Unexpected error:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadProfile();
+
+    // Set up real-time subscription for profile updates
+    const supabase = createClient();
+    const channel = supabase
+      .channel('profile-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'profiles',
+        },
+        (payload) => {
+          if (payload.eventType === 'UPDATE' && payload.new) {
+            setProfile(payload.new as UserProfile);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const handleAvatarUpdate = (newAvatarUrl: string | null) => {
+    if (profile) {
+      setProfile({
+        ...profile,
+        avatar_url: newAvatarUrl,
+      });
+    }
+  };
+
+  if (loading) {
+    return <FullPageLoading />;
+  }
+
+  const displayName = profile?.first_name 
+    ? `${profile.first_name}${profile.last_name ? ' ' + profile.last_name : ''}`
+    : 'Runner';
+
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
         <ProfileHeader
-          name="Hanni Pham"
-          location="Mahaplag, Leyte, Philippines"
-          bio="Marathoner"
-          imageUrl="https://images.unsplash.com/photo-1758684051112-3df152ce3256?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9maWxlJTIwd29tYW4lMjBydW5uZXJ8ZW58MXx8fHwxNzY0NTAwNTY5fDA&ixlib=rb-4.1.0&q=80&w=1080"
+          userId={profile?.id || ''}
+          name={displayName}
+          location={profile?.location || ''}
+          bio={profile?.bio || ''}
+          imageUrl={profile?.avatar_url || ''}
+          googleAvatarUrl={profile?.google_avatar_url || ''}
           totalRaces={3}
           totalDistance={52}
           timeOnFeet={{
@@ -87,6 +181,7 @@ export default function ProfilePage() {
             minutes: 45,
             seconds: 36,
           }}
+          onAvatarUpdate={handleAvatarUpdate}
         />
 
         <RaceArchive races={profileRaces} />
