@@ -9,7 +9,7 @@ interface RaceCardProps {
 
 export default function RaceCard({ title, description, imageUrl, distances }: RaceCardProps) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-lg border border-[#fc4c02]/31 overflow-hidden hover:shadow-lg transition-shadow">
       <div className="p-4 pb-3">
         <h3 className="text-lg font-semibold mb-1">{title}</h3>
         <p className="text-gray-500 text-sm mb-3">{description}</p>

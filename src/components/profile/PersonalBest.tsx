@@ -16,7 +16,7 @@ interface PersonalBestProps {
 
 export default function PersonalBest({ efforts }: PersonalBestProps) {
   return (
-    <div className="bg-white rounded-3xl border border-gray-200 shadow-sm p-8 relative mb-8">
+    <div className="bg-white rounded-3xl border border-[#fc4c02]/31 shadow-sm p-8 relative mb-8">
       {/* Share Icon */}
       <div className="absolute top-6 right-6">
         <button className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
@@ -26,7 +26,7 @@ export default function PersonalBest({ efforts }: PersonalBestProps) {
 
       <h2 className="text-3xl font-bold mb-8">Personal Best</h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-6 lg:gap-8">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 lg:gap-6 [&>*:last-child:nth-child(odd)]:col-span-2 [&>*:last-child:nth-child(odd)]:md:col-span-1">
         {efforts.map((effort, index) => (
           <div key={index} className="text-center">
             {/* Medal Icon */}
@@ -35,26 +35,26 @@ export default function PersonalBest({ efforts }: PersonalBestProps) {
             )}
             
             {/* Distance */}
-            <div className="mb-2">
-              <span className="text-4xl font-bold">{effort.distance}</span>
+            <div className="text-[28px] md:text-[40px] leading-none mb-2">
+              {effort.distance}
               {effort.unit && (
-                <span className={`${effort.unit === "Marathon" || effort.unit === "KM" ? "text-[#fc4c02]" : ""} text-sm ml-1 font-semibold`}>
+                <span className={`${effort.unit === "Marathon" || effort.unit === "KM" ? "text-[#fc4c02]" : ""}`}>
                   {effort.unit}
                 </span>
               )}
             </div>
 
             {/* Time */}
-            <div className="text-lg font-semibold mb-1">{effort.time}</div>
+            <div className="text-[20px] mb-1">{effort.time}</div>
 
             {/* Pace */}
-            <div className="text-xs text-gray-500 mb-1">{effort.pace}</div>
+            <div className="text-gray-400 text-[12px] mb-1">{effort.pace}</div>
 
             {/* Race Info */}
             {effort.race && (
               <>
-                <div className="text-xs text-gray-400">{effort.race}</div>
-                <div className="text-xs text-gray-400">{effort.date}</div>
+                <div className="text-gray-400 text-[11px]">{effort.race}</div>
+                <div className="text-gray-400 text-[11px]">{effort.date}</div>
               </>
             )}
           </div>

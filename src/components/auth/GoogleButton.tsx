@@ -24,7 +24,7 @@ export default function GoogleButton({ mode = 'login' }: GoogleButtonProps) {
     <button
       onClick={handleGoogleSignIn}
       disabled={isLoading}
-      className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[#fc4c02]/31 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <svg className="w-5 h-5" viewBox="0 0 24 24">
         <path

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { calculateTimeRemaining, padNumber } from '@/utils/countdown';
 
 interface NextRaceCardProps {
   raceName: string;
@@ -18,21 +19,13 @@ export default function NextRaceCard({ raceName, location, date, raceDate }: Nex
   });
 
   useEffect(() => {
-    const calculateTimeLeft = () => {
-      const difference = raceDate.getTime() - new Date().getTime();
-      
-      if (difference > 0) {
-        setTimeLeft({
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60),
-        });
-      }
+    const updateCountdown = () => {
+      const remaining = calculateTimeRemaining(raceDate);
+      setTimeLeft(remaining);
     };
 
-    calculateTimeLeft();
-    const timer = setInterval(calculateTimeLeft, 1000);
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
 
     return () => clearInterval(timer);
   }, [raceDate]);
@@ -43,17 +36,14 @@ export default function NextRaceCard({ raceName, location, date, raceDate }: Nex
         Your <span className="text-[#fc4c02]">Next Race</span>
       </h2>
 
-      <div className="bg-white border border-gray-200 rounded-3xl shadow-lg p-8">
-        {/* Race Title */}
+      <div className="bg-white border border-[#fc4c02]/31 rounded-3xl shadow-lg p-8">
         <div className="text-center mb-6">
           <h3 className="text-[24px] mb-1">{raceName}</h3>
           <p className="text-gray-400 text-[12px]">{location}</p>
           <p className="text-gray-400 text-[12px]">{date}</p>
         </div>
 
-        {/* Countdown Grid */}
         <div className="grid grid-cols-2 gap-4">
-          {/* Days */}
           <div className="border-2 border-[#fc4c02] rounded-xl p-4 text-center">
             <div className="text-[56px] leading-none mb-1">
               {String(timeLeft.days).padStart(2, '0')}
@@ -64,7 +54,7 @@ export default function NextRaceCard({ raceName, location, date, raceDate }: Nex
           {/* Hours */}
           <div className="border-2 border-[#fc4c02] rounded-xl p-4 text-center">
             <div className="text-[56px] leading-none mb-1">
-              {String(timeLeft.hours).padStart(2, '0')}
+              {padNumber(timeLeft.hours)}
             </div>
             <div className="text-[14px]">Hours</div>
           </div>
@@ -72,7 +62,7 @@ export default function NextRaceCard({ raceName, location, date, raceDate }: Nex
           {/* Minutes */}
           <div className="border-2 border-[#fc4c02] rounded-xl p-4 text-center">
             <div className="text-[56px] leading-none mb-1">
-              {String(timeLeft.minutes).padStart(2, '0')}
+              {padNumber(timeLeft.minutes)}
             </div>
             <div className="text-[14px]">Minutes</div>
           </div>
@@ -80,7 +70,7 @@ export default function NextRaceCard({ raceName, location, date, raceDate }: Nex
           {/* Seconds */}
           <div className="border-2 border-[#fc4c02] rounded-xl p-4 text-center">
             <div className="text-[56px] leading-none mb-1">
-              {String(timeLeft.seconds).padStart(2, '0')}
+              {padNumber(timeLeft.seconds)}
             </div>
             <div className="text-[14px]">Seconds</div>
           </div>

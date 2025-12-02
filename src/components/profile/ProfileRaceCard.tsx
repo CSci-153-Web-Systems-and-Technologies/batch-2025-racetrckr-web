@@ -8,7 +8,7 @@ interface ProfileRaceCardProps {
 
 export default function ProfileRaceCard({ title, imageUrl, distance }: ProfileRaceCardProps) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-2xl border border-[#fc4c02]/31 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <div className="p-4">
         <h3 className="text-sm font-semibold mb-1">{title}</h3>
         <p className="text-xs text-[#fc4c02] font-medium mb-3">{distance}</p>

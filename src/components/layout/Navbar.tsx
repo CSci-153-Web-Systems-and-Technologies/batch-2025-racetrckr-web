@@ -4,10 +4,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import { Menu, X, LogOut, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import LogoutModal from '@/components/navbar/LogoutModal';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const handleLogout = () => {
+    // Add your logout logic here (e.g., clear session, redirect to login)
+    console.log('User logged out');
+    setShowLogoutModal(false);
+    // Example: router.push('/login');
+  };
 
   return (
     <nav className="bg-white shadow-sm border-b">
@@ -41,14 +49,17 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Profile & Logout */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3">
             <Link href="/profile" className="w-10 h-10 rounded-full bg-[#fc4c02] flex items-center justify-center hover:bg-[#e64602] transition-colors">
               <User className="w-5 h-5 text-white" />
             </Link>
-            <Button variant="outline" className="hover:bg-red-50 hover:text-red-600 hover:border-red-600 transition-colors">
-              <LogOut />
-              Logout
-            </Button>
+            <button 
+              onClick={() => setShowLogoutModal(true)}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-gray-200 hover:border-red-200"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Logout</span>
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -93,14 +104,28 @@ export default function Navbar() {
               >
                 Profile
               </Link>
-              <Button variant="outline" className="w-full justify-start hover:bg-red-50 hover:text-red-600 hover:border-red-600 transition-colors">
-                <LogOut />
-                Logout
-              </Button>
+              <div className="mt-2 pt-2 border-t border-gray-200">
+                <button 
+                  onClick={() => {
+                    setShowLogoutModal(true);
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-gray-200 hover:border-red-200"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
       </div>
+
+      <LogoutModal 
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+      />
     </nav>
   );
 }

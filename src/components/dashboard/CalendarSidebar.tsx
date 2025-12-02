@@ -21,7 +21,7 @@ export default function CalendarSidebar() {
   ];
 
   return (
-    <div className="bg-white border border-gray-200 rounded-3xl shadow-sm p-4 sticky top-8 w-fit mx-auto">
+    <div className="bg-white border border-[#fc4c02]/31 rounded-3xl shadow-sm p-4 sticky top-8 w-fit mx-auto">
       <h3 className="text-lg font-semibold mb-3 text-center">Calendar</h3>
       
       <div className="flex justify-center scale-90">

@@ -10,7 +10,7 @@ interface StatsCardDesktopProps {
 
 export default function StatsCardDesktop({ totalRaces, totalDistance, timeOnFeet }: StatsCardDesktopProps) {
   return (
-    <div className="bg-white border border-gray-200 rounded-3xl shadow-sm p-6 lg:p-8">
+    <div className="bg-white border border-[#fc4c02]/31 rounded-3xl shadow-sm p-6 lg:p-8">
       <div className="grid grid-cols-3 gap-6 lg:gap-8">
         {/* Total Races */}
         <div className="text-center">
@@ -31,22 +31,22 @@ export default function StatsCardDesktop({ totalRaces, totalDistance, timeOnFeet
           <h3 className="text-sm font-medium text-gray-600 mb-3">Time on Feet</h3>
           <div className="space-y-1">
             <div className="flex items-baseline justify-center gap-2">
-              <span className="text-[#fc4c02] text-[40px] leading-none">
+              <span className="text-[#fc4c02] text-[28px] leading-none">
                 {String(timeOnFeet.hours).padStart(2, '0')}
               </span>
-              <span className="text-gray-500 text-[16px]">Hours</span>
+              <span className="text-gray-500 text-[13px]">Hours</span>
             </div>
             <div className="flex items-baseline justify-center gap-2">
-              <span className="text-[#fc4c02] text-[40px] leading-none">
+              <span className="text-[#fc4c02] text-[28px] leading-none">
                 {String(timeOnFeet.minutes).padStart(2, '0')}
               </span>
-              <span className="text-gray-500 text-[16px]">Minutes</span>
+              <span className="text-gray-500 text-[13px]">Minutes</span>
             </div>
             <div className="flex items-baseline justify-center gap-2">
-              <span className="text-[#fc4c02] text-[40px] leading-none">
+              <span className="text-[#fc4c02] text-[28px] leading-none">
                 {String(timeOnFeet.seconds).padStart(2, '0')}
               </span>
-              <span className="text-gray-500 text-[16px]">Seconds</span>
+              <span className="text-gray-500 text-[13px]">Seconds</span>
             </div>
           </div>
         </div>

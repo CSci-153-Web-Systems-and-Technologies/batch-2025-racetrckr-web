@@ -19,11 +19,15 @@ export default function DashboardPage() {
     },
   };
 
+  // Mock race date for testing countdown (5 minutes from now)
+  const mockRaceDate = new Date();
+  mockRaceDate.setMinutes(mockRaceDate.getMinutes() + 5);
+
   const nextRace = {
     raceName: 'Maasin Marathon',
     location: 'Poblacion 4, Maasin City, Southern Leyte',
-    date: 'Wednesday May 7, 2025',
-    raceDate: new Date('2025-05-07T09:00:00'),
+    date: 'Testing Countdown',
+    raceDate: mockRaceDate,
   };
 
   const achievements = [

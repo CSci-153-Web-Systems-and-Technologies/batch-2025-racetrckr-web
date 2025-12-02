@@ -114,7 +114,7 @@ export default function AddRacePage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-3xl border border-gray-200 shadow-sm p-8">
+        <div className="bg-white rounded-3xl border border-[#fc4c02]/31 shadow-sm p-8">
           <AddRaceHeader />
 
           <form onSubmit={handleSubmit} className="space-y-6">

@@ -7,7 +7,7 @@ import ActionButtons from '@/components/events/ActionButtons';
 import DistanceFilters from '@/components/events/DistanceFilters';
 import RacesGrid from '@/components/events/RacesGrid';
 
-const distanceFilters = ['Marathon', 'Half Marathon', '10km', '5km', '3km'];
+const distanceFilters = ['Marathon', '½ Marathon', '10km', '5km', '3km'];
 
 const mockRaces = [
   {
