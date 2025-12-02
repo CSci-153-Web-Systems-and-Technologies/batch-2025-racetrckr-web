@@ -14,10 +14,6 @@ export default function LogoutModal({ isOpen, onClose, onConfirm }: LogoutModalP
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-white rounded-3xl shadow-xl max-w-md w-full p-8 border border-[#fc4c02]/31">
-        <div className="flex items-center justify-center w-16 h-16 mx-auto mb-6 rounded-full bg-red-50 border-2 border-red-200">
-          <LogOut className="w-8 h-8 text-red-600" />
-        </div>
-        
         <h2 className="text-2xl font-semibold text-center mb-3">
           Logout from <span className="text-[#fc4c02]">RaceTrackr</span>?
         </h2>
@@ -34,7 +30,7 @@ export default function LogoutModal({ isOpen, onClose, onConfirm }: LogoutModalP
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 px-6 py-3 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm"
+            className="flex-1 px-6 py-3 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm border border-red-600"
           >
             Logout
           </button>
