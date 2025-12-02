@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase';
-import { ButtonLoading } from '@/components/auth/LoadingSpinner';
+import { ButtonLoading } from '@/components/auth/shared/LoadingSpinner';
 
 export default function ResetPasswordPage() {
   const router = useRouter();

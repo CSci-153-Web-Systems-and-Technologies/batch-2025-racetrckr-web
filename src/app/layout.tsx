@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import AuthStatus from "@/components/auth/AuthStatus";
-import { SessionManager } from "@/components/auth/SessionManager";
+import AuthStatus from "@/components/auth/shared/AuthStatus";
+import { SessionManager } from "@/components/auth/shared/SessionManager";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
