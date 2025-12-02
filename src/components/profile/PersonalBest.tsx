@@ -26,7 +26,7 @@ export default function PersonalBest({ efforts }: PersonalBestProps) {
 
       <h2 className="text-3xl font-bold mb-8">Personal Best</h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-6 lg:gap-8">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 lg:gap-6">
         {efforts.map((effort, index) => (
           <div key={index} className="text-center">
             {/* Medal Icon */}
@@ -35,26 +35,26 @@ export default function PersonalBest({ efforts }: PersonalBestProps) {
             )}
             
             {/* Distance */}
-            <div className="mb-2">
-              <span className="text-4xl font-bold">{effort.distance}</span>
+            <div className="text-[40px] leading-none mb-2">
+              {effort.distance}
               {effort.unit && (
-                <span className={`${effort.unit === "Marathon" || effort.unit === "KM" ? "text-[#fc4c02]" : ""} text-sm ml-1 font-semibold`}>
+                <span className={`${effort.unit === "Marathon" || effort.unit === "KM" ? "text-[#fc4c02]" : ""}`}>
                   {effort.unit}
                 </span>
               )}
             </div>
 
             {/* Time */}
-            <div className="text-lg font-semibold mb-1">{effort.time}</div>
+            <div className="text-[20px] mb-1">{effort.time}</div>
 
             {/* Pace */}
-            <div className="text-xs text-gray-500 mb-1">{effort.pace}</div>
+            <div className="text-gray-400 text-[12px] mb-1">{effort.pace}</div>
 
             {/* Race Info */}
             {effort.race && (
               <>
-                <div className="text-xs text-gray-400">{effort.race}</div>
-                <div className="text-xs text-gray-400">{effort.date}</div>
+                <div className="text-gray-400 text-[11px]">{effort.race}</div>
+                <div className="text-gray-400 text-[11px]">{effort.date}</div>
               </>
             )}
           </div>

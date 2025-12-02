@@ -28,7 +28,7 @@ const AddEventModal = ({ isOpen, onClose }: AddEventModalProps) => {
 
   const distances = [
     'Marathon',
-    'Half Marathon',
+    '½ Marathon',
     'Ultra Marathon',
     '15km',
     '10km',

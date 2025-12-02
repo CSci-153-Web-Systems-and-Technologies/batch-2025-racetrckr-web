@@ -52,7 +52,7 @@ const bestEfforts = [
     hasMedal: true,
   },
   {
-    distance: "Half",
+    distance: "½",
     unit: "Marathon",
     time: "00:12:23",
     pace: "4:07 / km",
