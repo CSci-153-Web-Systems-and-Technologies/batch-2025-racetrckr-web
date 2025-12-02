@@ -110,12 +110,28 @@ export default function ProfilePage() {
           .single();
 
         if (profileError) {
-          console.error('Error fetching profile:', profileError);
+          // Profile doesn't exist, create it
+          if (profileError.code === 'PGRST116') {
+            const { data: newProfile } = await supabase
+              .from('profiles')
+              .insert({
+                id: user.id,
+                email: user.email,
+                first_name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+                google_avatar_url: user.user_metadata?.avatar_url || null,
+              })
+              .select()
+              .single();
+            
+            if (newProfile) {
+              setProfile(newProfile);
+            }
+          }
         } else {
           setProfile(profileData);
         }
       } catch (error) {
-        console.error('Unexpected error:', error);
+        // Unexpected error occurred
       } finally {
         setLoading(false);
       }
