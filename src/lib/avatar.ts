@@ -146,10 +146,11 @@ export async function updateProfileAvatar(
 
     const { error } = await supabase
       .from('profiles')
-      .update({ avatar_url: avatarUrl, updated_at: new Date().toISOString() })
+      .update({ avatar_url: avatarUrl })
       .eq('id', userId);
 
     if (error) {
+      console.error('RLS Error details:', error);
       return { success: false, error: error.message };
     }
 
