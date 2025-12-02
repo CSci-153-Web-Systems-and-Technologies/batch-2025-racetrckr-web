@@ -112,12 +112,16 @@ export default function ProfilePage() {
         if (profileError) {
           // Profile doesn't exist, create it
           if (profileError.code === 'PGRST116') {
+            // Extract first name from full name or email
+            const fullName = user.user_metadata?.full_name || user.user_metadata?.name;
+            const firstName = fullName ? fullName.split(' ')[0] : user.email?.split('@')[0] || 'Runner';
+            
             const { data: newProfile } = await supabase
               .from('profiles')
               .insert({
                 id: user.id,
                 email: user.email,
-                first_name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+                first_name: firstName,
                 google_avatar_url: user.user_metadata?.avatar_url || null,
               })
               .select()
