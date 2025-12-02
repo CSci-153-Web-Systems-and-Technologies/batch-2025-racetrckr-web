@@ -1,12 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import GoogleButton from './GoogleButton';
+import { createClient } from '@/lib/supabase';
 
 export default function LoginForm() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -17,12 +20,25 @@ export default function LoginForm() {
     setIsLoading(true);
     setError('');
 
-    // TODO: Implement Supabase login
-    console.log('Login with:', email, password);
-    
-    setTimeout(() => {
+    try {
+      const supabase = createClient();
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        setError(signInError.message);
+      } else if (data.user) {
+        // Successfully logged in
+        router.push('/dashboard');
+      }
+    } catch (err) {
+      setError('An unexpected error occurred');
+      console.error('Login error:', err);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
