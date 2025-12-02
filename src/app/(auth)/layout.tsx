@@ -1,4 +1,4 @@
-import { AuthErrorBoundary } from '@/components/auth/AuthErrorBoundary';
+import { AuthErrorBoundary } from '@/components/auth/shared/AuthErrorBoundary';
 
 export default function AuthLayout({
   children,
