@@ -19,7 +19,7 @@ export default function BestEffortsDesktop({ achievements, userName }: BestEffor
         Your <span className="text-[#fc4c02]">Best Efforts</span>
       </h2>
 
-      <div className="bg-white border border-gray-200 rounded-3xl shadow-sm p-6 lg:p-8">
+      <div className="bg-white border border-[#fc4c02]/31 rounded-3xl shadow-sm p-6 lg:p-8">
         <div className="text-center mb-6">
           <h3 className="text-xl font-semibold">Way to go {userName}!</h3>
         </div>

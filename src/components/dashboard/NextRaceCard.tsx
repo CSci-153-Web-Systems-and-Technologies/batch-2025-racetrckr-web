@@ -43,17 +43,14 @@ export default function NextRaceCard({ raceName, location, date, raceDate }: Nex
         Your <span className="text-[#fc4c02]">Next Race</span>
       </h2>
 
-      <div className="bg-white border border-gray-200 rounded-3xl shadow-lg p-8">
-        {/* Race Title */}
+      <div className="bg-white border border-[#fc4c02]/31 rounded-3xl shadow-lg p-8">
         <div className="text-center mb-6">
           <h3 className="text-[24px] mb-1">{raceName}</h3>
           <p className="text-gray-400 text-[12px]">{location}</p>
           <p className="text-gray-400 text-[12px]">{date}</p>
         </div>
 
-        {/* Countdown Grid */}
         <div className="grid grid-cols-2 gap-4">
-          {/* Days */}
           <div className="border-2 border-[#fc4c02] rounded-xl p-4 text-center">
             <div className="text-[56px] leading-none mb-1">
               {String(timeLeft.days).padStart(2, '0')}

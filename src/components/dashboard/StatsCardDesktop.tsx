@@ -10,7 +10,7 @@ interface StatsCardDesktopProps {
 
 export default function StatsCardDesktop({ totalRaces, totalDistance, timeOnFeet }: StatsCardDesktopProps) {
   return (
-    <div className="bg-white border border-gray-200 rounded-3xl shadow-sm p-6 lg:p-8">
+    <div className="bg-white border border-[#fc4c02]/31 rounded-3xl shadow-sm p-6 lg:p-8">
       <div className="grid grid-cols-3 gap-6 lg:gap-8">
         {/* Total Races */}
         <div className="text-center">
