@@ -90,6 +90,7 @@ const bestEfforts = [
 export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authUserId, setAuthUserId] = useState<string>('');
 
   useEffect(() => {
     async function loadProfile() {
@@ -102,6 +103,8 @@ export default function ProfilePage() {
           setLoading(false);
           return;
         }
+
+        setAuthUserId(user.id);
 
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
@@ -176,7 +179,9 @@ export default function ProfilePage() {
     }
   };
 
-  if (loading) {
+  const resolvedUserId = profile?.id ?? authUserId;
+
+  if (loading || !resolvedUserId) {
     return <FullPageLoading />;
   }
 
@@ -188,7 +193,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
         <ProfileHeader
-          userId={profile?.id || ''}
+          userId={resolvedUserId}
           name={displayName}
           location={profile?.location || ''}
           bio={profile?.bio || ''}

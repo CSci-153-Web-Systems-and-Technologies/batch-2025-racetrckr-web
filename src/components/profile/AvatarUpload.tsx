@@ -13,7 +13,7 @@ import {
 } from '@/lib/avatar';
 
 interface AvatarUploadProps {
-  userId: string;
+  userId?: string | null;
   currentAvatarUrl?: string | null;
   googleAvatarUrl?: string | null;
   userName?: string;
@@ -56,6 +56,11 @@ export default function AvatarUpload({
   const handleUpload = async () => {
     if (!fileInputRef.current?.files?.[0]) return;
 
+    if (!userId) {
+      toast.error('Profile still loading. Please try again in a moment.');
+      return;
+    }
+
     setIsUploading(true);
     const file = fileInputRef.current.files[0];
 
@@ -63,14 +68,14 @@ export default function AvatarUpload({
       // Upload to storage
       const { url, error: uploadError } = await uploadAvatar(userId, file);
       if (uploadError) {
-        toast.error(uploadError);
+        toast.error(`Upload failed: ${uploadError}`);
         return;
       }
 
       // Update profile
-      const { error: updateError } = await updateProfileAvatar(userId, url);
+      const { success, error: updateError } = await updateProfileAvatar(userId, url);
       if (updateError) {
-        toast.error(updateError);
+        toast.error(`Profile update failed: ${updateError}`);
         return;
       }
 
@@ -93,6 +98,10 @@ export default function AvatarUpload({
 
   const handleDelete = async () => {
     if (!hasCustomAvatar) return;
+    if (!userId) {
+      toast.error('Profile still loading. Please try again in a moment.');
+      return;
+    }
 
     setIsDeleting(true);
     try {
