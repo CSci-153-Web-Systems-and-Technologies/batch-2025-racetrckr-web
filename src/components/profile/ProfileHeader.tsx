@@ -1,9 +1,10 @@
-'use client';
+ 'use client';
 
-import { useState } from 'react';
-import { Edit, Share2 } from "lucide-react";
-import AvatarUpload from "./AvatarUpload";
-import EditProfileModal from "./EditProfileModal";
+ import { useState } from 'react';
+ import { Edit, Share2 } from "lucide-react";
+ import Image from 'next/image';
+ import EditProfileModal from "./EditProfileModal";
+ import { getInitials } from '@/lib/avatar';
 
 interface ProfileHeaderProps {
   userId: string;
@@ -78,16 +79,17 @@ export default function ProfileHeader({
       <div className="flex flex-col gap-8">
         {/* Profile Image and Info */}
         <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
-          <AvatarUpload
-            userId={userId}
-            currentAvatarUrl={imageUrl}
-            googleAvatarUrl={googleAvatarUrl}
-            userName={name}
-            onAvatarUpdate={onAvatarUpdate}
-            size="large"
-            showCamera={false}
-          />
-          
+          {/* Static, non-interactive avatar for header */}
+          <div className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-200 border-4 border-gray-100 shadow-lg flex-shrink-0">
+            { (imageUrl || googleAvatarUrl) ? (
+              <Image src={imageUrl || googleAvatarUrl || ''} alt={name} fill className="object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-[#fc4c02] text-white text-4xl font-bold">
+                {getInitials(name)}
+              </div>
+            ) }
+          </div>
+
           <div className="text-center md:text-left">
             <h1 className="text-3xl font-bold text-[#fc4c02] mb-1">{name}</h1>
             <p className="text-gray-600 text-sm mb-0.5">{location}</p>

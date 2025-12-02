@@ -20,6 +20,7 @@ interface AvatarUploadProps {
   onAvatarUpdate?: (newUrl: string | null) => void;
   size?: 'default' | 'large';
   showCamera?: boolean;
+  showRemove?: boolean;
 }
 
 export default function AvatarUpload({
@@ -30,6 +31,7 @@ export default function AvatarUpload({
   onAvatarUpdate,
   size = 'default',
   showCamera = true,
+  showRemove = true,
 }: AvatarUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -189,8 +191,8 @@ export default function AvatarUpload({
         />
       </div>
 
-      {/* Remove Avatar Button (only show if has custom avatar) */}
-      {hasCustomAvatar && (
+      {/* Remove Avatar Button (only show if has custom avatar and showRemove enabled) */}
+      {showRemove && hasCustomAvatar && (
         <button
           onClick={handleDelete}
           disabled={isDeleting}
