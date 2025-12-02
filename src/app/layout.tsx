@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import AuthStatus from "@/components/auth/AuthStatus";
 
 export const metadata: Metadata = {
   title: "RaceTrackr",
@@ -15,6 +16,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         {children}
+        <AuthStatus />
       </body>
     </html>
   );
