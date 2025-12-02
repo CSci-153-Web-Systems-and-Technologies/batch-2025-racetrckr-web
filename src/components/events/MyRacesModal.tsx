@@ -83,7 +83,7 @@ const MyRacesModal = ({ isOpen, onClose }: MyRacesModalProps) => {
           <div className="w-80 border-l bg-gray-50 p-6 overflow-y-auto flex-shrink-0 hidden lg:block">
             <h3 className="text-lg font-semibold mb-4">Calendar</h3>
             
-            <div className="bg-white rounded-lg p-4 shadow-sm">
+            <div className="bg-white rounded-lg border border-[#fc4c02]/31 p-4 shadow-sm">
               <Calendar
                 mode="single"
                 selected={date}
