@@ -92,13 +92,6 @@ export default function LoginForm() {
         </div>
       </div>
 
-      {/* Error Message */}
-      {error && (
-        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
-          {error}
-        </div>
-      )}
-
       {/* Login Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
