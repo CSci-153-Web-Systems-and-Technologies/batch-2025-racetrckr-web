@@ -13,7 +13,22 @@ import BestEffortsDesktop from '@/components/dashboard/BestEffortsDesktop';
 import CalendarSidebar from '@/components/dashboard/CalendarSidebar';
 
 export default function DashboardPage() {
-  const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState<{
+    name: string;
+    totalRaces: number;
+    totalDistance: number;
+    timeOnFeet: {
+      hours: number;
+      minutes: number;
+      seconds: number;
+    };
+    nextRace: {
+      raceName: string;
+      location: string;
+      date: string;
+      raceDate: Date;
+    } | null;
+  }>({
     name: '',
     totalRaces: 0,
     totalDistance: 0,
@@ -22,6 +37,7 @@ export default function DashboardPage() {
       minutes: 0,
       seconds: 0,
     },
+    nextRace: null,
   });
   const [loading, setLoading] = useState(true);
 
@@ -75,11 +91,33 @@ export default function DashboardPage() {
           ? `${profile.first_name || ''}${profile.last_name ? ' ' + profile.last_name : ''}`.trim()
           : 'Runner';
 
+        // Fetch upcoming race (next race in the future)
+        const now = new Date().toISOString();
+        const { data: upcomingRaces } = await supabase
+          .from('races')
+          .select('race_name, race_date, city, province')
+          .eq('user_id', user.id)
+          .gte('race_date', now)
+          .order('race_date', { ascending: true })
+          .limit(1);
+
+        const upcomingRace = upcomingRaces && upcomingRaces.length > 0 ? upcomingRaces[0] : null;
+
         setUserData({
           name: displayName,
           totalRaces,
           totalDistance: Math.round(totalDistance * 100) / 100,
           timeOnFeet: { hours, minutes, seconds },
+          nextRace: upcomingRace ? {
+            raceName: upcomingRace.race_name,
+            location: `${upcomingRace.city}, ${upcomingRace.province}`,
+            date: new Date(upcomingRace.race_date).toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+            }),
+            raceDate: new Date(upcomingRace.race_date),
+          } : null,
         });
       } catch (error) {
         console.error('Error loading dashboard data:', error);
@@ -95,14 +133,11 @@ export default function DashboardPage() {
     return <FullPageLoading />;
   }
 
-  const mockRaceDate = new Date();
-  mockRaceDate.setMinutes(mockRaceDate.getMinutes() + 5);
-
-  const nextRace = {
+  const nextRace = userData.nextRace || {
     raceName: 'Your Next Race',
     location: 'Coming Soon',
     date: 'Check Events for races to join',
-    raceDate: mockRaceDate,
+    raceDate: new Date(),
   };
 
   const achievements = [
