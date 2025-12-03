@@ -1,6 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { createClient } from '@/lib/supabase';
 import AddRaceHeader from '@/components/addrace/AddRaceHeader';
 import NameDateFields from '@/components/addrace/NameDateFields';
 import AddressFields from '@/components/addrace/AddressFields';
@@ -11,6 +14,9 @@ import NotesField from '@/components/addrace/NotesField';
 import FormActions from '@/components/addrace/FormActions';
 
 export default function AddRacePage() {
+  const router = useRouter();
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     province: '',
@@ -27,6 +33,23 @@ export default function AddRacePage() {
     seconds: '',
     notes: '',
   });
+
+  useEffect(() => {
+    async function loadUser() {
+      const supabase = createClient();
+      const { data: { user }, error } = await supabase.auth.getUser();
+      
+      if (error || !user) {
+        toast.error('Please log in to add a race');
+        router.push('/login');
+        return;
+      }
+      
+      setUserId(user.id);
+    }
+    
+    loadUser();
+  }, [router]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -105,10 +128,77 @@ export default function AddRacePage() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission here
+    
+    if (!userId) {
+      toast.error('Please log in to add a race');
+      return;
+    }
+
+    // Validate required fields
+    if (!formData.name.trim()) {
+      toast.error('Race name is required');
+      return;
+    }
+
+    if (!formData.date) {
+      toast.error('Race date is required');
+      return;
+    }
+
+    // Calculate final distance in km
+    const distanceInKm = getDistanceInKm();
+    if (distanceInKm <= 0) {
+      toast.error('Please select or enter a valid distance');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const supabase = createClient();
+      
+      // Prepare race data
+      const raceData = {
+        user_id: userId,
+        name: formData.name.trim(),
+        distance: distanceInKm,
+        date: formData.date,
+        province: formData.province || null,
+        province_code: formData.provinceCode || null,
+        city_municipality: formData.cityMunicipality || null,
+        city_municipality_code: formData.cityMunicipalityCode || null,
+        barangay: formData.baranggay || null,
+        hours: formData.hours ? parseInt(formData.hours) : null,
+        minutes: formData.minutes ? parseInt(formData.minutes) : null,
+        seconds: formData.seconds ? parseInt(formData.seconds) : null,
+        notes: formData.notes.trim() || null,
+      };
+
+      const { error } = await supabase
+        .from('races')
+        .insert([raceData]);
+
+      if (error) {
+        console.error('Error saving race:', error);
+        toast.error('Failed to save race. Please try again.');
+        return;
+      }
+
+      toast.success('Race added successfully!');
+      
+      // Redirect to profile after short delay
+      setTimeout(() => {
+        router.push('/profile');
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error('An unexpected error occurred');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -149,7 +239,7 @@ export default function AddRacePage() {
               handleInputChange={handleInputChange} 
             />
 
-            <FormActions handleReset={handleReset} />
+            <FormActions handleReset={handleReset} isSubmitting={isSubmitting} />
           </form>
         </div>
       </div>
