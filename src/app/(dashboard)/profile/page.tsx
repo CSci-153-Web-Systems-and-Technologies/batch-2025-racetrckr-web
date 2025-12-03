@@ -27,6 +27,7 @@ interface Race {
   minutes: number | null;
   seconds: number | null;
   date: string | null;
+  cover_photo_url: string | null;
   created_at: string;
 }
 
@@ -224,7 +225,7 @@ export default function ProfilePage() {
           return {
             id: race.id,
             title: race.name,
-            imageUrl: 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=800&q=80', // Default placeholder
+            imageUrl: race.cover_photo_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=800&q=80',
             distance: distanceDisplay,
           };
         });
