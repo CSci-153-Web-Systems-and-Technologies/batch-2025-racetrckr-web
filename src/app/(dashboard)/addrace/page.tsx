@@ -17,6 +17,9 @@ export default function AddRacePage() {
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
+  const [coverPhotoPreview, setCoverPhotoPreview] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     province: '',
@@ -82,6 +85,21 @@ export default function AddRacePage() {
     setFormData((prev) => ({ ...prev, baranggay: name }));
   };
 
+  const handlePhotoChange = (file: File | null) => {
+    setCoverPhoto(file);
+    
+    if (file) {
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCoverPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setCoverPhotoPreview(null);
+    }
+  };
+
   const handleDistanceChange = (distance: string) => {
     setFormData((prev) => ({ ...prev, distance }));
   };
@@ -126,6 +144,8 @@ export default function AddRacePage() {
       seconds: '',
       notes: '',
     });
+    setCoverPhoto(null);
+    setCoverPhotoPreview(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,6 +178,47 @@ export default function AddRacePage() {
 
     try {
       const supabase = createClient();
+      let coverPhotoUrl: string | null = null;
+
+      // Upload cover photo if selected
+      if (coverPhoto) {
+        setIsUploadingPhoto(true);
+        try {
+          const fileExt = coverPhoto.name.split('.').pop();
+          const fileName = `${userId}-${Date.now()}.${fileExt}`;
+          const filePath = `${userId}/${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('race-covers')
+            .upload(filePath, coverPhoto, {
+              cacheControl: '3600',
+              upsert: false,
+            });
+
+          if (uploadError) {
+            console.error('Error uploading photo:', uploadError);
+            toast.error('Failed to upload cover photo');
+            setIsSubmitting(false);
+            setIsUploadingPhoto(false);
+            return;
+          }
+
+          // Get public URL
+          const { data: { publicUrl } } = supabase.storage
+            .from('race-covers')
+            .getPublicUrl(filePath);
+
+          coverPhotoUrl = publicUrl;
+        } catch (uploadErr) {
+          console.error('Unexpected upload error:', uploadErr);
+          toast.error('Failed to upload cover photo');
+          setIsSubmitting(false);
+          setIsUploadingPhoto(false);
+          return;
+        } finally {
+          setIsUploadingPhoto(false);
+        }
+      }
       
       // Prepare race data
       const raceData = {
@@ -174,6 +235,7 @@ export default function AddRacePage() {
         minutes: formData.minutes ? parseInt(formData.minutes) : null,
         seconds: formData.seconds ? parseInt(formData.seconds) : null,
         notes: formData.notes.trim() || null,
+        cover_photo_url: coverPhotoUrl,
       };
 
       const { error } = await supabase
@@ -241,7 +303,11 @@ export default function AddRacePage() {
               handleInputChange={handleInputChange} 
             />
 
-            <CoverPhotoField />
+            <CoverPhotoField 
+              onPhotoChange={handlePhotoChange}
+              preview={coverPhotoPreview}
+              isUploading={isUploadingPhoto}
+            />
 
             <NotesField 
               value={formData.notes} 
