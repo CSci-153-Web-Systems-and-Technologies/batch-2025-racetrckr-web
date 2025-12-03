@@ -47,52 +47,22 @@ interface RaceDisplay {
   distance: string;
 }
 
-const bestEfforts = [
-  {
-    distance: "3",
-    unit: "KM",
-    time: "00:12:23",
-    pace: "4:07 / km",
-    race: "Maasin City Marathon",
-    date: "August 3, 2025",
-    hasMedal: true,
-  },
-  {
-    distance: "5",
-    unit: "KM",
-    time: "--:--:--",
-    pace: "-- / km",
-    race: "",
-    date: "",
-    hasMedal: true,
-  },
-  {
-    distance: "10",
-    unit: "KM",
-    time: "00:12:23",
-    pace: "4:07 / km",
-    race: "Maasin City Marathon",
-    date: "August 3, 2025",
-    hasMedal: true,
-  },
-  {
-    distance: "½",
-    unit: "Marathon",
-    time: "00:12:23",
-    pace: "4:07 / km",
-    race: "Maasin City Marathon",
-    date: "August 3, 2025",
-    hasMedal: true,
-  },
-  {
-    distance: "Marathon",
-    unit: "",
-    time: "00:12:23",
-    pace: "4:07 / km",
-    race: "Maasin City Marathon",
-    date: "August 3, 2025",
-    hasMedal: true,
-  },
+interface BestEffort {
+  distance: string;
+  unit: string;
+  time: string;
+  pace: string;
+  race: string;
+  date: string;
+  hasMedal: boolean;
+}
+
+const STANDARD_DISTANCES = [
+  { km: 3, label: '3', unit: 'KM' },
+  { km: 5, label: '5', unit: 'KM' },
+  { km: 10, label: '10', unit: 'KM' },
+  { km: 21.0975, label: '½', unit: 'Marathon' },
+  { km: 42.195, label: 'Marathon', unit: '' },
 ];
 
 export default function ProfilePage() {
@@ -105,6 +75,7 @@ export default function ProfilePage() {
     timeOnFeet: { hours: 0, minutes: 0, seconds: 0 },
   });
   const [races, setRaces] = useState<RaceDisplay[]>([]);
+  const [bestEfforts, setBestEfforts] = useState<BestEffort[]>([]);
 
   useEffect(() => {
     async function loadProfile() {
@@ -259,6 +230,88 @@ export default function ProfilePage() {
         });
 
         setRaces(formattedRaces);
+
+        // Calculate best efforts for standard distances
+        const calculatedBestEfforts: BestEffort[] = STANDARD_DISTANCES.map((standard) => {
+          // Find best time for this distance
+          const matchingRaces = races.filter((race) => {
+            if (!race.distance) return false;
+            const dist = race.distance;
+            // Allow small tolerance for matching distances
+            return Math.abs(dist - standard.km) < 0.5;
+          });
+
+          if (matchingRaces.length === 0) {
+            // No races for this distance
+            return {
+              distance: standard.label,
+              unit: standard.unit,
+              time: '--:--:--',
+              pace: '-- / km',
+              race: '',
+              date: '',
+              hasMedal: false,
+            };
+          }
+
+          // Find the race with the best (lowest) time
+          const bestRace = matchingRaces.reduce((best, current) => {
+            const bestSeconds = (best.hours || 0) * 3600 + (best.minutes || 0) * 60 + (best.seconds || 0);
+            const currentSeconds = (current.hours || 0) * 3600 + (current.minutes || 0) * 60 + (current.seconds || 0);
+            
+            if (currentSeconds === 0) return best;
+            if (bestSeconds === 0) return current;
+            
+            return currentSeconds < bestSeconds ? current : best;
+          });
+
+          const totalSeconds = (bestRace.hours || 0) * 3600 + (bestRace.minutes || 0) * 60 + (bestRace.seconds || 0);
+          
+          if (totalSeconds === 0) {
+            return {
+              distance: standard.label,
+              unit: standard.unit,
+              time: '--:--:--',
+              pace: '-- / km',
+              race: '',
+              date: '',
+              hasMedal: false,
+            };
+          }
+
+          // Format time as HH:MM:SS
+          const hours = Math.floor(totalSeconds / 3600);
+          const minutes = Math.floor((totalSeconds % 3600) / 60);
+          const seconds = totalSeconds % 60;
+          const timeFormatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+          // Calculate pace (minutes per km)
+          const pacePerKm = totalSeconds / standard.km / 60;
+          const paceMinutes = Math.floor(pacePerKm);
+          const paceSeconds = Math.round((pacePerKm - paceMinutes) * 60);
+          const paceFormatted = `${paceMinutes}:${String(paceSeconds).padStart(2, '0')} / km`;
+
+          // Format date
+          const dateFormatted = bestRace.date 
+            ? new Date(bestRace.date).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })
+            : '';
+
+          return {
+            distance: standard.label,
+            unit: standard.unit,
+            time: timeFormatted,
+            pace: paceFormatted,
+            race: bestRace.name,
+            date: dateFormatted,
+            hasMedal: true,
+          };
+        });
+
+        setBestEfforts(calculatedBestEfforts);
       } catch (error) {
         console.error('Unexpected error loading race stats:', error);
       }
