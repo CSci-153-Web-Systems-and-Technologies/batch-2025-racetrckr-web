@@ -26,7 +26,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadDashboardData() {
+    async function loadUserName() {
       try {
         const supabase = createClient();
 
@@ -37,58 +37,30 @@ export default function DashboardPage() {
           return;
         }
 
-        // Fetch user profile
+        // Fetch user profile for name only
         const { data: profile } = await supabase
           .from('profiles')
           .select('first_name, last_name')
           .eq('id', user.id)
           .single();
 
-        // Fetch user races for stats
-        const { data: races } = await supabase
-          .from('races')
-          .select('distance, hours, minutes, seconds')
-          .eq('user_id', user.id);
-
-        // Calculate stats
-        let totalRaces = 0;
-        let totalDistance = 0;
-        let totalSeconds = 0;
-
-        if (races && races.length > 0) {
-          totalRaces = races.length;
-          totalDistance = races.reduce((sum, race) => sum + (race.distance || 0), 0);
-          totalSeconds = races.reduce((sum, race) => {
-            const hours = race.hours || 0;
-            const minutes = race.minutes || 0;
-            const seconds = race.seconds || 0;
-            return sum + (hours * 3600 + minutes * 60 + seconds);
-          }, 0);
-        }
-
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
         // Format name
         const displayName = profile
           ? `${profile.first_name || ''}${profile.last_name ? ' ' + profile.last_name : ''}`.trim()
           : 'Runner';
 
-        setUserData({
+        setUserData((prev) => ({
+          ...prev,
           name: displayName,
-          totalRaces,
-          totalDistance: Math.round(totalDistance * 100) / 100,
-          timeOnFeet: { hours, minutes, seconds },
-        });
+        }));
       } catch (error) {
-        console.error('Error loading dashboard data:', error);
+        console.error('Error loading user name:', error);
       } finally {
         setLoading(false);
       }
     }
 
-    loadDashboardData();
+    loadUserName();
   }, []);
 
   if (loading) {
