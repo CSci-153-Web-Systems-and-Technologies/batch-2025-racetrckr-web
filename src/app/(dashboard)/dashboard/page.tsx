@@ -29,6 +29,12 @@ export default function DashboardPage() {
       date: string;
       raceDate: Date;
     } | null;
+    achievements: Array<{
+      distance: number;
+      time: string;
+      pace: string;
+      raceName: string;
+    }>;
   }>({
     name: '',
     totalRaces: 0,
@@ -39,6 +45,7 @@ export default function DashboardPage() {
       seconds: 0,
     },
     nextRace: null,
+    achievements: [],
   });
   const [loading, setLoading] = useState(true);
 
@@ -61,11 +68,15 @@ export default function DashboardPage() {
           .eq('id', user.id)
           .single();
 
-        // Fetch user races for stats
-        const { data: races } = await supabase
+        // Fetch user races for stats and best efforts
+        const { data: races, error: racesError } = await supabase
           .from('races')
-          .select('distance, hours, minutes, seconds')
+          .select('distance, hours, minutes, seconds, name')
           .eq('user_id', user.id);
+
+        console.log('Dashboard - Fetched races:', races);
+        console.log('Dashboard - Races error:', racesError);
+        console.log('Dashboard - User ID:', user.id);
 
         // Calculate stats
         let totalRaces = 0;
@@ -83,6 +94,8 @@ export default function DashboardPage() {
           }, 0);
         }
 
+        console.log('Dashboard - Calculated stats:', { totalRaces, totalDistance, totalSeconds });
+
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
@@ -93,16 +106,103 @@ export default function DashboardPage() {
           : 'Runner';
 
         // Fetch upcoming race (next race in the future)
-        const now = new Date().toISOString();
+        const now = new Date().toISOString().split('T')[0];
         const { data: upcomingRaces } = await supabase
           .from('races')
-          .select('race_name, race_date, city, province')
+          .select('name, date, city_municipality, province')
           .eq('user_id', user.id)
-          .gte('race_date', now)
-          .order('race_date', { ascending: true })
+          .gte('date', now)
+          .order('date', { ascending: true })
           .limit(1);
 
         const upcomingRace = upcomingRaces && upcomingRaces.length > 0 ? upcomingRaces[0] : null;
+
+        // Calculate best efforts for standard distances
+        const STANDARD_DISTANCES = [
+          { km: 3, distance: 3 },
+          { km: 5, distance: 5 },
+          { km: 10, distance: 10 },
+          { km: 21.0975, distance: 21 },
+          { km: 42.195, distance: 42 },
+        ];
+
+        const calculatedAchievements = STANDARD_DISTANCES.map((standard) => {
+          if (!races || races.length === 0) {
+            return {
+              distance: standard.distance,
+              time: '--:--:--',
+              pace: '-- / km',
+              raceName: '',
+            };
+          }
+
+          // Find best time for this distance
+          const matchingRaces = races.filter((race) => {
+            if (!race.distance) return false;
+            const dist = race.distance;
+            return Math.abs(dist - standard.km) < 0.5;
+          });
+
+          if (matchingRaces.length === 0) {
+            return {
+              distance: standard.distance,
+              time: '--:--:--',
+              pace: '-- / km',
+              raceName: '',
+            };
+          }
+
+          // Find the race with the best (lowest) time
+          const bestRace = matchingRaces.reduce((best, current) => {
+            const bestSeconds = (best.hours || 0) * 3600 + (best.minutes || 0) * 60 + (best.seconds || 0);
+            const currentSeconds = (current.hours || 0) * 3600 + (current.minutes || 0) * 60 + (current.seconds || 0);
+            
+            if (currentSeconds === 0) return best;
+            if (bestSeconds === 0) return current;
+            
+            return currentSeconds < bestSeconds ? current : best;
+          });
+
+          const bestTotalSeconds = (bestRace.hours || 0) * 3600 + (bestRace.minutes || 0) * 60 + (bestRace.seconds || 0);
+          
+          if (bestTotalSeconds === 0) {
+            return {
+              distance: standard.distance,
+              time: '--:--:--',
+              pace: '-- / km',
+              raceName: '',
+            };
+          }
+
+          // Format time as HH:MM:SS
+          const raceHours = Math.floor(bestTotalSeconds / 3600);
+          const raceMinutes = Math.floor((bestTotalSeconds % 3600) / 60);
+          const raceSeconds = bestTotalSeconds % 60;
+          const timeFormatted = `${String(raceHours).padStart(2, '0')}:${String(raceMinutes).padStart(2, '0')}:${String(raceSeconds).padStart(2, '0')}`;
+
+          // Calculate pace (minutes per km)
+          const pacePerKm = bestTotalSeconds / standard.km / 60;
+          const paceMinutes = Math.floor(pacePerKm);
+          const paceSeconds = Math.round((pacePerKm - paceMinutes) * 60);
+          const paceFormatted = `${paceMinutes}:${String(paceSeconds).padStart(2, '0')} / km`;
+
+          return {
+            distance: standard.distance,
+            time: timeFormatted,
+            pace: paceFormatted,
+            raceName: bestRace.name || '',
+          };
+        });
+
+        console.log('Dashboard - Final calculated achievements:', calculatedAchievements);
+        console.log('Dashboard - Setting userData with:', {
+          name: displayName,
+          totalRaces,
+          totalDistance: Math.round(totalDistance * 100) / 100,
+          timeOnFeet: { hours, minutes, seconds },
+          nextRace: upcomingRace,
+          achievementsCount: calculatedAchievements.length,
+        });
 
         setUserData({
           name: displayName,
@@ -110,15 +210,16 @@ export default function DashboardPage() {
           totalDistance: Math.round(totalDistance * 100) / 100,
           timeOnFeet: { hours, minutes, seconds },
           nextRace: upcomingRace ? {
-            raceName: upcomingRace.race_name,
-            location: `${upcomingRace.city}, ${upcomingRace.province}`,
-            date: new Date(upcomingRace.race_date).toLocaleDateString('en-US', {
+            raceName: upcomingRace.name,
+            location: `${upcomingRace.city_municipality}, ${upcomingRace.province}`,
+            date: new Date(upcomingRace.date).toLocaleDateString('en-US', {
               month: 'long',
               day: 'numeric',
               year: 'numeric',
             }),
-            raceDate: new Date(upcomingRace.race_date),
+            raceDate: new Date(upcomingRace.date),
           } : null,
+          achievements: calculatedAchievements,
         });
       } catch (error) {
         console.error('Error loading dashboard data:', error);
@@ -140,39 +241,6 @@ export default function DashboardPage() {
     date: 'Check Events for races to join',
     raceDate: new Date(),
   };
-
-  const achievements = [
-    {
-      distance: 3,
-      time: '00:12:23',
-      pace: '4:07 / km',
-      raceName: 'Maasin City Marathon',
-    },
-    {
-      distance: 5,
-      time: '--:--:--',
-      pace: '-- / km',
-      raceName: '',
-    },
-    {
-      distance: 10,
-      time: '00:12:23',
-      pace: '4:07 / km',
-      raceName: 'Maasin City Marathon',
-    },
-    {
-      distance: 21,
-      time: '00:12:23',
-      pace: '4:07 / km',
-      raceName: 'Maasin City Marathon',
-    },
-    {
-      distance: 42,
-      time: '00:12:23',
-      pace: '4:07 / km',
-      raceName: 'Maasin City Marathon',
-    },
-  ];
 
   return (
     <>
@@ -196,7 +264,7 @@ export default function DashboardPage() {
           ) : (
             <EmptyNextRace />
           )}
-          <BestEffortsCard achievements={achievements} />
+          <BestEffortsCard achievements={userData.achievements} />
         </div>
       </div>
 
@@ -223,7 +291,7 @@ export default function DashboardPage() {
                 <EmptyNextRace />
               )}
               <BestEffortsDesktop 
-                achievements={achievements}
+                achievements={userData.achievements}
                 userName={userData.name.split(' ')[0]}
               />
             </div>
