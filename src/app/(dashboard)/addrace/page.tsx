@@ -182,7 +182,16 @@ export default function AddRacePage() {
 
       if (error) {
         console.error('Error saving race:', error);
-        toast.error('Failed to save race. Please try again.');
+        console.error('Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
+        
+        // Show more specific error message
+        const errorMessage = error.message || 'Failed to save race. Please try again.';
+        toast.error(errorMessage);
         return;
       }
 
