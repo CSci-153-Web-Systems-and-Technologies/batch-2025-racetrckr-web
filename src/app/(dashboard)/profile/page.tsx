@@ -40,26 +40,12 @@ interface UserStats {
   };
 }
 
-const profileRaces = [
-  {
-    id: 1,
-    title: "Bohol International Marathon",
-    imageUrl: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=800&q=80",
-    distance: "Full Marathon",
-  },
-  {
-    id: 2,
-    title: "Bohol International Marathon",
-    imageUrl: "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&q=80",
-    distance: "21K",
-  },
-  {
-    id: 3,
-    title: "Bohol International Marathon",
-    imageUrl: "https://images.unsplash.com/photo-1565411642431-7e2c99f2d686?w=800&q=80",
-    distance: "10K",
-  },
-];
+interface RaceDisplay {
+  id: string;
+  title: string;
+  imageUrl: string;
+  distance: string;
+}
 
 const bestEfforts = [
   {
@@ -118,6 +104,7 @@ export default function ProfilePage() {
     totalDistance: 0,
     timeOnFeet: { hours: 0, minutes: 0, seconds: 0 },
   });
+  const [races, setRaces] = useState<RaceDisplay[]>([]);
 
   useEffect(() => {
     async function loadProfile() {
@@ -245,6 +232,33 @@ export default function ProfilePage() {
           totalDistance: Math.round(totalDistance * 100) / 100, // Round to 2 decimals
           timeOnFeet: { hours, minutes, seconds },
         });
+
+        // Format races for display
+        const formattedRaces: RaceDisplay[] = races.map((race) => {
+          // Format distance for display
+          let distanceDisplay = '';
+          if (race.distance) {
+            const dist = race.distance;
+            if (dist === 42.195 || dist === 42.2 || dist === 42) {
+              distanceDisplay = 'Full Marathon';
+            } else if (dist === 21.0975 || dist === 21.1 || dist === 21) {
+              distanceDisplay = 'Half Marathon';
+            } else if (dist >= 1) {
+              distanceDisplay = `${dist}K`;
+            } else {
+              distanceDisplay = `${dist}K`;
+            }
+          }
+
+          return {
+            id: race.id,
+            title: race.name,
+            imageUrl: 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=800&q=80', // Default placeholder
+            distance: distanceDisplay,
+          };
+        });
+
+        setRaces(formattedRaces);
       } catch (error) {
         console.error('Unexpected error loading race stats:', error);
       }
@@ -296,7 +310,7 @@ export default function ProfilePage() {
           onProfileUpdate={handleProfileUpdate}
         />
 
-        <RaceArchive races={profileRaces} />
+        <RaceArchive races={races} />
 
         <PersonalBest efforts={bestEfforts} />
       </div>

@@ -1,7 +1,7 @@
 import ProfileRaceCard from "./ProfileRaceCard";
 
 interface Race {
-  id: number;
+  id: string;
   title: string;
   imageUrl: string;
   distance: string;
