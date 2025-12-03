@@ -8,6 +8,7 @@ import StatsCard from '@/components/dashboard/StatsCard';
 import StatsCardDesktop from '@/components/dashboard/StatsCardDesktop';
 import NextRaceCard from '@/components/dashboard/NextRaceCard';
 import NextRaceCardDesktop from '@/components/dashboard/NextRaceCardDesktop';
+import EmptyNextRace from '@/components/dashboard/EmptyNextRace';
 import BestEffortsCard from '@/components/dashboard/BestEffortsCard';
 import BestEffortsDesktop from '@/components/dashboard/BestEffortsDesktop';
 import CalendarSidebar from '@/components/dashboard/CalendarSidebar';
@@ -185,12 +186,16 @@ export default function DashboardPage() {
             totalDistance={userData.totalDistance}
             timeOnFeet={userData.timeOnFeet}
           />
-          <NextRaceCard
-            raceName={nextRace.raceName}
-            location={nextRace.location}
-            date={nextRace.date}
-            raceDate={nextRace.raceDate}
-          />
+          {userData.nextRace ? (
+            <NextRaceCard
+              raceName={nextRace.raceName}
+              location={nextRace.location}
+              date={nextRace.date}
+              raceDate={nextRace.raceDate}
+            />
+          ) : (
+            <EmptyNextRace />
+          )}
           <BestEffortsCard achievements={achievements} />
         </div>
       </div>
@@ -207,12 +212,16 @@ export default function DashboardPage() {
                 totalDistance={userData.totalDistance}
                 timeOnFeet={userData.timeOnFeet}
               />
-              <NextRaceCardDesktop
-                raceName={nextRace.raceName}
-                location={nextRace.location}
-                date={nextRace.date}
-                raceDate={nextRace.raceDate}
-              />
+              {userData.nextRace ? (
+                <NextRaceCardDesktop
+                  raceName={nextRace.raceName}
+                  location={nextRace.location}
+                  date={nextRace.date}
+                  raceDate={nextRace.raceDate}
+                />
+              ) : (
+                <EmptyNextRace />
+              )}
               <BestEffortsDesktop 
                 achievements={achievements}
                 userName={userData.name.split(' ')[0]}
