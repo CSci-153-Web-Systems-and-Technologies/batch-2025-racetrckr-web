@@ -1,3 +1,8 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase';
+import { FullPageLoading } from '@/components/auth/shared/LoadingSpinner';
 import Greeting from '@/components/dashboard/Greeting';
 import StatsCard from '@/components/dashboard/StatsCard';
 import StatsCardDesktop from '@/components/dashboard/StatsCardDesktop';
@@ -8,8 +13,93 @@ import BestEffortsDesktop from '@/components/dashboard/BestEffortsDesktop';
 import CalendarSidebar from '@/components/dashboard/CalendarSidebar';
 
 export default function DashboardPage() {
-  const userData = {
-    name: 'Hanni Pham',
+  const [userData, setUserData] = useState({
+    name: '',
+    totalRaces: 0,
+    totalDistance: 0,
+    timeOnFeet: {
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+    },
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadDashboardData() {
+      try {
+        const supabase = createClient();
+
+        // Get authenticated user
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) {
+          setLoading(false);
+          return;
+        }
+
+        // Fetch user profile
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('first_name, last_name')
+          .eq('id', user.id)
+          .single();
+
+        // Fetch user races for stats
+        const { data: races } = await supabase
+          .from('races')
+          .select('distance, hours, minutes, seconds')
+          .eq('user_id', user.id);
+
+        // Calculate stats
+        let totalRaces = 0;
+        let totalDistance = 0;
+        let totalSeconds = 0;
+
+        if (races && races.length > 0) {
+          totalRaces = races.length;
+          totalDistance = races.reduce((sum, race) => sum + (race.distance || 0), 0);
+          totalSeconds = races.reduce((sum, race) => {
+            const hours = race.hours || 0;
+            const minutes = race.minutes || 0;
+            const seconds = race.seconds || 0;
+            return sum + (hours * 3600 + minutes * 60 + seconds);
+          }, 0);
+        }
+
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        // Format name
+        const displayName = profile
+          ? `${profile.first_name || ''}${profile.last_name ? ' ' + profile.last_name : ''}`.trim()
+          : 'Runner';
+
+        setUserData({
+          name: displayName,
+          totalRaces,
+          totalDistance: Math.round(totalDistance * 100) / 100,
+          timeOnFeet: { hours, minutes, seconds },
+        });
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadDashboardData();
+  }, []);
+
+  if (loading) {
+    return <FullPageLoading />;
+  }
+
+  const mockRaceDate = new Date();
+  mockRaceDate.setMinutes(mockRaceDate.getMinutes() + 5);
+
+  // Hardcoded stats (can be integrated separately later)
+  const stats = {
     totalRaces: 3,
     totalDistance: 52,
     timeOnFeet: {
@@ -19,14 +109,10 @@ export default function DashboardPage() {
     },
   };
 
-  // Mock race date for testing countdown (5 minutes from now)
-  const mockRaceDate = new Date();
-  mockRaceDate.setMinutes(mockRaceDate.getMinutes() + 5);
-
   const nextRace = {
-    raceName: 'Maasin Marathon',
-    location: 'Poblacion 4, Maasin City, Southern Leyte',
-    date: 'Testing Countdown',
+    raceName: 'Your Next Race',
+    location: 'Coming Soon',
+    date: 'Check Events for races to join',
     raceDate: mockRaceDate,
   };
 
@@ -71,9 +157,9 @@ export default function DashboardPage() {
         <div className="flex-1 overflow-y-auto px-6 pb-8">
           <Greeting userName={userData.name} />
           <StatsCard
-            totalRaces={userData.totalRaces}
-            totalDistance={userData.totalDistance}
-            timeOnFeet={userData.timeOnFeet}
+            totalRaces={stats.totalRaces}
+            totalDistance={stats.totalDistance}
+            timeOnFeet={stats.timeOnFeet}
           />
           <NextRaceCard
             raceName={nextRace.raceName}
@@ -93,9 +179,9 @@ export default function DashboardPage() {
             <div className="lg:col-span-2 space-y-8">
               <Greeting userName={userData.name} />
               <StatsCardDesktop
-                totalRaces={userData.totalRaces}
-                totalDistance={userData.totalDistance}
-                timeOnFeet={userData.timeOnFeet}
+                totalRaces={stats.totalRaces}
+                totalDistance={stats.totalDistance}
+                timeOnFeet={stats.timeOnFeet}
               />
               <NextRaceCardDesktop
                 raceName={nextRace.raceName}
