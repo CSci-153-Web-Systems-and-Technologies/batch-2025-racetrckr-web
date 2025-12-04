@@ -80,10 +80,6 @@ export default function DashboardPage() {
           .select('distance, hours, minutes, seconds, name')
           .eq('user_id', user.id);
 
-        console.log('Dashboard - Fetched races:', races);
-        console.log('Dashboard - Races error:', racesError);
-        console.log('Dashboard - User ID:', user.id);
-
         // Calculate stats
         let totalRaces = 0;
         let totalDistance = 0;
@@ -99,8 +95,6 @@ export default function DashboardPage() {
             return sum + (hours * 3600 + minutes * 60 + seconds);
           }, 0);
         }
-
-        console.log('Dashboard - Calculated stats:', { totalRaces, totalDistance, totalSeconds });
 
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -236,16 +230,6 @@ export default function DashboardPage() {
             pace: paceFormatted,
             raceName: bestRace.name || '',
           };
-        });
-
-        console.log('Dashboard - Final calculated achievements:', calculatedAchievements);
-        console.log('Dashboard - Setting userData with:', {
-          name: displayName,
-          totalRaces,
-          totalDistance: Math.round(totalDistance * 100) / 100,
-          timeOnFeet: { hours, minutes, seconds },
-          nextRace: upcomingRace,
-          achievementsCount: calculatedAchievements.length,
         });
 
         setUserData({
