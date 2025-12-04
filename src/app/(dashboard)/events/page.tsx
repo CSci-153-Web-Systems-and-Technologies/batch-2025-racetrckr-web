@@ -165,7 +165,10 @@ export default function EventsPage() {
           </div>
         </div>
       ) : (
-        <RacesGrid races={racesData} />
+        <RacesGrid 
+          races={racesData} 
+          isFiltering={searchQuery !== '' || selectedFilters.length > 0}
+        />
       )}
     </div>
   );
