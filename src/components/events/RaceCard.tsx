@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase';
+import { Toast } from '@/components/ui/toast';
 
 interface RaceCardProps {
   id: string;
@@ -16,6 +17,7 @@ export default function RaceCard({ id, title, description, imageUrl, distances }
   const [isRegistering, setIsRegistering] = useState(false);
   const [selectedDistance, setSelectedDistance] = useState<string | null>(null);
   const [showDistanceModal, setShowDistanceModal] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const handleRegister = async (distance: string) => {
     try {
@@ -25,7 +27,7 @@ export default function RaceCard({ id, title, description, imageUrl, distances }
       // Get current user
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        alert('Please login to register for events');
+        setToast({ message: 'Please login to register for events', type: 'error' });
         return;
       }
 
@@ -38,7 +40,7 @@ export default function RaceCard({ id, title, description, imageUrl, distances }
         .single();
 
       if (existing) {
-        alert('You are already registered for this event!');
+        setToast({ message: 'You are already registered for this event!', type: 'info' });
         return;
       }
 
@@ -56,15 +58,15 @@ export default function RaceCard({ id, title, description, imageUrl, distances }
 
       if (error) {
         console.error('Error registering for event:', error);
-        alert('Failed to register. Please try again.');
+        setToast({ message: 'Failed to register. Please try again.', type: 'error' });
         return;
       }
 
-      alert(`Successfully registered for ${distance}!`);
+      setToast({ message: `Successfully registered for ${distance}!`, type: 'success' });
       setShowDistanceModal(false);
     } catch (err) {
       console.error('Unexpected error:', err);
-      alert('An unexpected error occurred.');
+      setToast({ message: 'An unexpected error occurred.', type: 'error' });
     } finally {
       setIsRegistering(false);
     }
@@ -142,6 +144,15 @@ export default function RaceCard({ id, title, description, imageUrl, distances }
             </button>
           </div>
         </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </>
   );
