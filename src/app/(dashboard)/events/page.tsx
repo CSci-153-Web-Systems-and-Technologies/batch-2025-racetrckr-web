@@ -7,6 +7,7 @@ import SearchBar from '@/components/events/SearchBar';
 import ActionButtons from '@/components/events/ActionButtons';
 import DistanceFilters from '@/components/events/DistanceFilters';
 import RacesGrid from '@/components/events/RacesGrid';
+import AddEventModal from '@/components/events/AddEventModal';
 
 const distanceFilters = ['Marathon', '½ Marathon', '10km', '5km', '3km'];
 
@@ -29,6 +30,7 @@ export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAddEventModalOpen, setIsAddEventModalOpen] = useState(false);
 
   const toggleFilter = (filter: string) => {
     setSelectedFilters((prev) =>
@@ -39,37 +41,37 @@ export default function EventsPage() {
   };
 
   // Fetch events from database
-  useEffect(() => {
-    async function fetchEvents() {
-      try {
-        setLoading(true);
-        setError(null);
-        const supabase = createClient();
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const supabase = createClient();
 
-        // Fetch active events ordered by date
-        const { data, error: fetchError } = await supabase
-          .from('events')
-          .select('*')
-          .eq('is_active', true)
-          .gte('event_date', new Date().toISOString().split('T')[0])
-          .order('event_date', { ascending: true });
+      // Fetch active events ordered by date
+      const { data, error: fetchError } = await supabase
+        .from('events')
+        .select('*')
+        .eq('is_active', true)
+        .gte('event_date', new Date().toISOString().split('T')[0])
+        .order('event_date', { ascending: true });
 
-        if (fetchError) {
-          console.error('Error fetching events:', fetchError);
-          setError('Failed to load events. Please try again later.');
-          setEvents([]);
-        } else {
-          setEvents(data || []);
-        }
-      } catch (err) {
-        console.error('Unexpected error:', err);
-        setError('An unexpected error occurred.');
+      if (fetchError) {
+        console.error('Error fetching events:', fetchError);
+        setError('Failed to load events. Please try again later.');
         setEvents([]);
-      } finally {
-        setLoading(false);
+      } else {
+        setEvents(data || []);
       }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred.');
+      setEvents([]);
+    } finally {
+      setLoading(false);
     }
+  };
 
+  useEffect(() => {
     fetchEvents();
   }, []);
 
@@ -134,7 +136,7 @@ export default function EventsPage() {
             </div>
 
             {/* Action Buttons */}
-            <ActionButtons />
+            <ActionButtons onEventAdded={fetchEvents} />
           </div>
 
           {/* Bottom Row: Distance Filters */}
@@ -168,8 +170,16 @@ export default function EventsPage() {
         <RacesGrid 
           races={racesData} 
           isFiltering={searchQuery !== '' || selectedFilters.length > 0}
+          onAddEvent={() => setIsAddEventModalOpen(true)}
         />
       )}
+
+      {/* Add Event Modal for empty state */}
+      <AddEventModal
+        isOpen={isAddEventModalOpen}
+        onClose={() => setIsAddEventModalOpen(false)}
+        onEventAdded={fetchEvents}
+      />
     </div>
   );
 }

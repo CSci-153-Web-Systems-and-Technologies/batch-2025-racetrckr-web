@@ -11,9 +11,10 @@ interface Race {
 interface RacesGridProps {
   races: Race[];
   isFiltering: boolean;
+  onAddEvent?: () => void;
 }
 
-export default function RacesGrid({ races, isFiltering }: RacesGridProps) {
+export default function RacesGrid({ races, isFiltering, onAddEvent }: RacesGridProps) {
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="bg-white rounded-lg border border-[#fc4c02]/31 p-6">
@@ -78,7 +79,10 @@ export default function RacesGrid({ races, isFiltering }: RacesGridProps) {
               <p className="text-gray-600 mb-6">
                 There are no upcoming events at the moment. Be the first to create one!
               </p>
-              <button className="bg-[#fc4c02] text-white px-6 py-2.5 rounded-lg font-medium hover:bg-[#fc4c02]/90 transition-colors">
+              <button 
+                onClick={onAddEvent}
+                className="bg-[#fc4c02] text-white px-6 py-2.5 rounded-lg font-medium hover:bg-[#fc4c02]/90 transition-colors"
+              >
                 Add New Event
               </button>
             </div>
