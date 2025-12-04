@@ -6,7 +6,11 @@ import { Button } from '@/components/ui/button';
 import AddEventModal from './AddEventModal';
 import MyRacesModal from './MyRacesModal';
 
-export default function ActionButtons() {
+interface ActionButtonsProps {
+  onEventAdded?: () => void;
+}
+
+export default function ActionButtons({ onEventAdded }: ActionButtonsProps) {
   const [isAddEventModalOpen, setIsAddEventModalOpen] = useState(false);
   const [isMyRacesModalOpen, setIsMyRacesModalOpen] = useState(false);
 
@@ -32,7 +36,8 @@ export default function ActionButtons() {
       
       <AddEventModal 
         isOpen={isAddEventModalOpen} 
-        onClose={() => setIsAddEventModalOpen(false)} 
+        onClose={() => setIsAddEventModalOpen(false)}
+        onEventAdded={onEventAdded}
       />
       
       <MyRacesModal 

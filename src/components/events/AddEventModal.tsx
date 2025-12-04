@@ -6,13 +6,15 @@ import { Button } from '@/components/ui/button';
 import NameDateFields from '@/components/addrace/NameDateFields';
 import AddressFields from '@/components/addrace/AddressFields';
 import CoverPhotoField from '@/components/addrace/CoverPhotoField';
+import { createClient } from '@/lib/supabase';
 
 interface AddEventModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onEventAdded?: () => void;
 }
 
-const AddEventModal = ({ isOpen, onClose }: AddEventModalProps) => {
+const AddEventModal = ({ isOpen, onClose, onEventAdded }: AddEventModalProps) => {
   const [formData, setFormData] = useState({
     name: '',
     date: '',
@@ -25,10 +27,15 @@ const AddEventModal = ({ isOpen, onClose }: AddEventModalProps) => {
   const [selectedDistances, setSelectedDistances] = useState<string[]>([]);
   const [registrationLink, setRegistrationLink] = useState('');
   const [description, setDescription] = useState('');
+  const [coverPhotoFile, setCoverPhotoFile] = useState<File | null>(null);
+  const [coverPhotoPreview, setCoverPhotoPreview] = useState<string | null>(null);
+  const [organizer, setOrganizer] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const distances = [
     'Marathon',
-    '½ Marathon',
+    'Half Marathon',
     'Ultra Marathon',
     '15km',
     '10km',
@@ -73,17 +80,113 @@ const AddEventModal = ({ isOpen, onClose }: AddEventModalProps) => {
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handlePhotoChange = (file: File | null) => {
+    setCoverPhotoFile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCoverPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setCoverPhotoPreview(null);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Handle event submission
-    console.log({
-      ...formData,
-      selectedDistances,
-      registrationLink,
-      description
-    });
-    handleReset();
-    onClose();
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const supabase = createClient();
+
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        setSubmitError('You must be logged in to add an event.');
+        return;
+      }
+
+      let coverImageUrl = 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=800&q=80';
+
+      // Upload cover photo if provided
+      if (coverPhotoFile) {
+        const fileExt = coverPhotoFile.name.split('.').pop();
+        const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('event-covers')
+          .upload(filePath, coverPhotoFile, {
+            cacheControl: '3600',
+            upsert: false
+          });
+
+        if (uploadError) {
+          console.error('Error uploading cover photo:', uploadError);
+          setSubmitError('Failed to upload cover photo. Please try again.');
+          return;
+        }
+
+        // Get public URL for the uploaded image
+        const { data: urlData } = supabase.storage
+          .from('event-covers')
+          .getPublicUrl(filePath);
+
+        coverImageUrl = urlData.publicUrl;
+      }
+
+      // Insert event into database
+      const { data, error } = await supabase
+        .from('events')
+        .insert([
+          {
+            title: formData.name,
+            description: description || null,
+            cover_image_url: coverImageUrl,
+            event_date: formData.date,
+            city_municipality: formData.cityMunicipality,
+            province: formData.province,
+            baranggay: formData.baranggay || null,
+            available_distances: selectedDistances,
+            registration_url: registrationLink,
+            organizer: organizer || user.email || 'Unknown',
+            created_by: user.id,
+            is_active: true,
+          },
+        ])
+        .select();
+
+      if (error) {
+        console.error('Error adding event:', error);
+        console.error('Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        setSubmitError(`Failed to add event: ${error.message || 'Please try again.'}`);
+        return;
+      }
+
+      console.log('Event added successfully:', data);
+      
+      // Reset form and close modal
+      handleReset();
+      onClose();
+      
+      // Trigger parent refresh
+      if (onEventAdded) {
+        onEventAdded();
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setSubmitError(`An unexpected error occurred: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -99,6 +202,10 @@ const AddEventModal = ({ isOpen, onClose }: AddEventModalProps) => {
     setSelectedDistances([]);
     setRegistrationLink('');
     setDescription('');
+    setCoverPhotoFile(null);
+    setCoverPhotoPreview(null);
+    setOrganizer('');
+    setSubmitError(null);
   };
 
   if (!isOpen) return null;
@@ -176,8 +283,26 @@ const AddEventModal = ({ isOpen, onClose }: AddEventModalProps) => {
             />
           </div>
 
+          {/* Organizer */}
+          <div>
+            <label htmlFor="organizer" className="block text-sm font-medium mb-2">
+              Organizer Name
+            </label>
+            <input
+              type="text"
+              id="organizer"
+              value={organizer}
+              onChange={(e) => setOrganizer(e.target.value)}
+              placeholder="Event organizer or company name"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc4c02]"
+            />
+          </div>
+
           {/* Cover Photo */}
-          <CoverPhotoField />
+          <CoverPhotoField 
+            onPhotoChange={handlePhotoChange}
+            preview={coverPhotoPreview}
+          />
 
           {/* Description */}
           <div>
@@ -194,6 +319,13 @@ const AddEventModal = ({ isOpen, onClose }: AddEventModalProps) => {
             />
           </div>
 
+          {/* Error Message */}
+          {submitError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              {submitError}
+            </div>
+          )}
+
           {/* Action Buttons */}
           <div className="flex gap-4 pt-4">
             <Button
@@ -201,14 +333,16 @@ const AddEventModal = ({ isOpen, onClose }: AddEventModalProps) => {
               variant="outline"
               onClick={handleReset}
               className="flex-1"
+              disabled={isSubmitting}
             >
               Reset
             </Button>
             <Button
               type="submit"
               className="flex-1 bg-[#fc4c02] hover:bg-[#e64402]"
+              disabled={isSubmitting}
             >
-              Submit Event
+              {isSubmitting ? 'Submitting...' : 'Submit Event'}
             </Button>
           </div>
         </form>

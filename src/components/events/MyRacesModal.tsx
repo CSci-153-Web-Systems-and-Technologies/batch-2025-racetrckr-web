@@ -1,57 +1,123 @@
 ﻿'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import AttendingRaceCard from './AttendingRaceCard';
+import { createClient } from '@/lib/supabase';
 
 interface MyRacesModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+interface AttendingRace {
+  id: string;
+  title: string;
+  location: string;
+  date: Date;
+  distance: string;
+  imageUrl: string;
+  registrationId: string;
+}
+
 const MyRacesModal = ({ isOpen, onClose }: MyRacesModalProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
-  
-  // Mock race dates for testing countdown
-  const mockRace1 = new Date();
-  mockRace1.setMinutes(mockRace1.getMinutes() + 3); // 3 minutes from now
-  
-  const mockRace2 = new Date();
-  mockRace2.setHours(mockRace2.getHours() + 2); // 2 hours from now
-  
-  const mockRace3 = new Date();
-  mockRace3.setDate(mockRace3.getDate() + 1); // 1 day from now
-  
-  const [attendingRaces, setAttendingRaces] = useState([
-    {
-      id: '1',
-      title: 'Maasin Marathon 2025 (Test: 3 mins)',
-      location: 'Maasin City, Southern Leyte',
-      date: mockRace1,
-      distance: 'Marathon',
-      imageUrl: 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=400&h=300&fit=crop'
-    },
-    {
-      id: '2',
-      title: 'City Fun Run (Test: 2 hours)',
-      location: 'Manila, Philippines',
-      date: mockRace2,
-      distance: '10km',
-      imageUrl: 'https://images.unsplash.com/photo-1513593771513-7b58b6c4af38?w=400&h=300&fit=crop'
-    },
-    {
-      id: '3',
-      title: 'Mountain Trail Challenge (Test: 1 day)',
-      location: 'Baguio City, Benguet',
-      date: mockRace3,
-      distance: 'Ultra Marathon',
-      imageUrl: 'https://images.unsplash.com/photo-1472148439583-2f0b5e2d0351?w=400&h=300&fit=crop'
-    }
-  ]);
+  const [attendingRaces, setAttendingRaces] = useState<AttendingRace[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleRemoveRace = (id: string) => {
-    setAttendingRaces(prev => prev.filter(race => race.id !== id));
+  useEffect(() => {
+    if (isOpen) {
+      fetchMyRaces();
+    }
+  }, [isOpen]);
+
+  const fetchMyRaces = async () => {
+    try {
+      setLoading(true);
+      const supabase = createClient();
+
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Fetch user's registered events
+      const { data: userEvents, error: userEventsError } = await supabase
+        .from('user_events')
+        .select('id, event_id, registered_distance')
+        .eq('user_id', user.id)
+        .eq('registration_status', 'registered');
+
+      if (userEventsError) {
+        console.error('Error fetching user events:', userEventsError);
+        return;
+      }
+
+      if (!userEvents || userEvents.length === 0) {
+        setAttendingRaces([]);
+        return;
+      }
+
+      // Get event IDs
+      const eventIds = userEvents.map(ue => ue.event_id);
+
+      // Fetch event details
+      const { data: events, error: eventsError } = await supabase
+        .from('events')
+        .select('id, title, event_date, city_municipality, province, cover_image_url')
+        .in('id', eventIds);
+
+      if (eventsError) {
+        console.error('Error fetching events:', eventsError);
+        return;
+      }
+
+      // Combine data
+      const races: AttendingRace[] = userEvents
+        .map(userEvent => {
+          const event = events?.find(e => e.id === userEvent.event_id);
+          if (!event) return null;
+
+          return {
+            id: event.id,
+            registrationId: userEvent.id,
+            title: event.title,
+            location: `${event.city_municipality}, ${event.province}`,
+            date: new Date(event.event_date),
+            distance: userEvent.registered_distance,
+            imageUrl: event.cover_image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=400&h=300&fit=crop'
+          };
+        })
+        .filter((race): race is AttendingRace => race !== null);
+
+      setAttendingRaces(races);
+    } catch (err) {
+      console.error('Unexpected error fetching races:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveRace = async (registrationId: string) => {
+    try {
+      const supabase = createClient();
+
+      // Delete the registration
+      const { error } = await supabase
+        .from('user_events')
+        .delete()
+        .eq('id', registrationId);
+
+      if (error) {
+        console.error('Error removing race:', error);
+        return;
+      }
+
+      // Update local state
+      setAttendingRaces(prev => prev.filter(race => race.registrationId !== registrationId));
+    } catch (err) {
+      console.error('Unexpected error removing race:', err);
+    }
   };
 
   if (!isOpen) return null;
@@ -73,7 +139,12 @@ const MyRacesModal = ({ isOpen, onClose }: MyRacesModalProps) => {
           <div className="flex-1 overflow-y-auto p-6">
             <h3 className="text-lg font-semibold mb-4">Attending Races ({attendingRaces.length})</h3>
             
-            {attendingRaces.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#fc4c02]"></div>
+                <p className="mt-4 text-gray-600">Loading your races...</p>
+              </div>
+            ) : attendingRaces.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
                 <p className="text-lg">No races yet!</p>
                 <p className="text-sm mt-2">Start attending races to see them here.</p>
@@ -82,8 +153,13 @@ const MyRacesModal = ({ isOpen, onClose }: MyRacesModalProps) => {
               <div className="space-y-4">
                 {attendingRaces.map((race) => (
                   <AttendingRaceCard
-                    key={race.id}
-                    {...race}
+                    key={race.registrationId}
+                    id={race.registrationId}
+                    title={race.title}
+                    location={race.location}
+                    date={race.date}
+                    distance={race.distance}
+                    imageUrl={race.imageUrl}
                     onRemove={handleRemoveRace}
                   />
                 ))}
