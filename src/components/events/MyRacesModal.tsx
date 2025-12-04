@@ -41,42 +41,54 @@ const MyRacesModal = ({ isOpen, onClose }: MyRacesModalProps) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Fetch user's registered events with event details
-      const { data, error } = await supabase
+      // Fetch user's registered events
+      const { data: userEvents, error: userEventsError } = await supabase
         .from('user_events')
-        .select(`
-          id,
-          registered_distance,
-          events (
-            id,
-            title,
-            event_date,
-            city_municipality,
-            province,
-            cover_image_url
-          )
-        `)
+        .select('id, event_id, registered_distance')
         .eq('user_id', user.id)
-        .eq('registration_status', 'registered')
-        .order('created_at', { ascending: false });
+        .eq('registration_status', 'registered');
 
-      if (error) {
-        console.error('Error fetching my races:', error);
+      if (userEventsError) {
+        console.error('Error fetching user events:', userEventsError);
         return;
       }
 
-      // Transform data to match component interface
-      const races: AttendingRace[] = (data || [])
-        .filter(item => item.events) // Filter out any null events
-        .map(item => ({
-          id: item.events.id,
-          registrationId: item.id,
-          title: item.events.title,
-          location: `${item.events.city_municipality}, ${item.events.province}`,
-          date: new Date(item.events.event_date),
-          distance: item.registered_distance,
-          imageUrl: item.events.cover_image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=400&h=300&fit=crop'
-        }));
+      if (!userEvents || userEvents.length === 0) {
+        setAttendingRaces([]);
+        return;
+      }
+
+      // Get event IDs
+      const eventIds = userEvents.map(ue => ue.event_id);
+
+      // Fetch event details
+      const { data: events, error: eventsError } = await supabase
+        .from('events')
+        .select('id, title, event_date, city_municipality, province, cover_image_url')
+        .in('id', eventIds);
+
+      if (eventsError) {
+        console.error('Error fetching events:', eventsError);
+        return;
+      }
+
+      // Combine data
+      const races: AttendingRace[] = userEvents
+        .map(userEvent => {
+          const event = events?.find(e => e.id === userEvent.event_id);
+          if (!event) return null;
+
+          return {
+            id: event.id,
+            registrationId: userEvent.id,
+            title: event.title,
+            location: `${event.city_municipality}, ${event.province}`,
+            date: new Date(event.event_date),
+            distance: userEvent.registered_distance,
+            imageUrl: event.cover_image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=400&h=300&fit=crop'
+          };
+        })
+        .filter((race): race is AttendingRace => race !== null);
 
       setAttendingRaces(races);
     } catch (err) {
