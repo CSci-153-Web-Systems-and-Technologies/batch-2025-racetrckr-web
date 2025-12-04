@@ -1,7 +1,7 @@
 import RaceCard from './RaceCard';
 
 interface Race {
-  id: number;
+  id: string | number;
   title: string;
   description: string;
   imageUrl: string;
