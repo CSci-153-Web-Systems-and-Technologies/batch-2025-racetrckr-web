@@ -111,10 +111,55 @@ export default function DashboardPage() {
           ? `${profile.first_name || ''}${profile.last_name ? ' ' + profile.last_name : ''}`.trim()
           : 'Runner';
 
-        // TODO: Fetch upcoming race and upcoming races from events table (to be implemented with events database integration)
-        // For now, set to null/empty to show empty state
-        const upcomingRace = null;
-        const formattedUpcomingRaces: Array<{ date: string; name: string; location: string }> = [];
+        // Fetch user's registered events
+        const { data: userEvents } = await supabase
+          .from('user_events')
+          .select('event_id, registered_distance')
+          .eq('user_id', user.id)
+          .eq('registration_status', 'registered');
+
+        let upcomingRace = null;
+        let formattedUpcomingRaces: Array<{ date: string; name: string; location: string }> = [];
+
+        if (userEvents && userEvents.length > 0) {
+          const eventIds = userEvents.map(ue => ue.event_id);
+
+          // Fetch upcoming events the user is registered for
+          const { data: events } = await supabase
+            .from('events')
+            .select('id, title, event_date, city_municipality, province')
+            .in('id', eventIds)
+            .eq('is_active', true)
+            .gte('event_date', new Date().toISOString().split('T')[0])
+            .order('event_date', { ascending: true });
+
+          if (events && events.length > 0) {
+            // Get the next race (earliest date)
+            const nextEvent = events[0];
+
+            upcomingRace = {
+              raceName: nextEvent.title,
+              location: `${nextEvent.city_municipality}, ${nextEvent.province}`,
+              date: new Date(nextEvent.event_date).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+              }),
+              raceDate: new Date(nextEvent.event_date)
+            };
+
+            // Format upcoming races for calendar (limit to 5)
+            formattedUpcomingRaces = events.slice(0, 5).map(event => ({
+              date: new Date(event.event_date).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+              }),
+              name: event.title,
+              location: `${event.city_municipality}, ${event.province}`
+            }));
+          }
+        }
 
         // Calculate best efforts for standard distances
         const STANDARD_DISTANCES = [
@@ -208,7 +253,7 @@ export default function DashboardPage() {
           totalRaces,
           totalDistance: Math.round(totalDistance * 100) / 100,
           timeOnFeet: { hours, minutes, seconds },
-          nextRace: null, // Will be populated from events table in future integration
+          nextRace: upcomingRace,
           achievements: calculatedAchievements,
           upcomingRaces: formattedUpcomingRaces,
         });
