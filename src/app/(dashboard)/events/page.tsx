@@ -48,7 +48,6 @@ export default function EventsPage() {
       const supabase = createClient();
 
       const today = new Date().toISOString().split('T')[0];
-      console.log('Fetching events from date:', today);
 
       // Fetch active events ordered by date
       const { data, error: fetchError } = await supabase
@@ -63,7 +62,6 @@ export default function EventsPage() {
         setError('Failed to load events. Please try again later.');
         setEvents([]);
       } else {
-        console.log('Fetched events:', data);
         setEvents(data || []);
       }
     } catch (err) {
