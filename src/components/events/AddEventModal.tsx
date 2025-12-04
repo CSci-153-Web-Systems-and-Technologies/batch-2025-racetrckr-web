@@ -153,6 +153,7 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }: AddEventModalProps) =>
             available_distances: selectedDistances,
             registration_url: registrationLink,
             organizer: organizer || user.email || 'Unknown',
+            created_by: user.id,
             is_active: true,
           },
         ])
@@ -160,7 +161,13 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }: AddEventModalProps) =>
 
       if (error) {
         console.error('Error adding event:', error);
-        setSubmitError('Failed to add event. Please try again.');
+        console.error('Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
+        setSubmitError(`Failed to add event: ${error.message || 'Please try again.'}`);
         return;
       }
 
@@ -176,7 +183,7 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }: AddEventModalProps) =>
       }
     } catch (err) {
       console.error('Unexpected error:', err);
-      setSubmitError('An unexpected error occurred.');
+      setSubmitError(`An unexpected error occurred: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setIsSubmitting(false);
     }
