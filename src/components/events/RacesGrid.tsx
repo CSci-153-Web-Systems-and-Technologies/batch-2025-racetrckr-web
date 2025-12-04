@@ -93,6 +93,7 @@ export default function RacesGrid({ races, isFiltering, onAddEvent }: RacesGridP
               {races.map((race) => (
                 <RaceCard
                   key={race.id}
+                  id={String(race.id)}
                   title={race.title}
                   description={race.description}
                   imageUrl={race.imageUrl}
