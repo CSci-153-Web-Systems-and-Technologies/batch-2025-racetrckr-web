@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Trophy } from 'lucide-react';
+import { Trophy, TrendingUp, MapPin, Calendar, Timer, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
 
@@ -138,6 +138,88 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-16 md:py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Everything You Need to <span className="text-[#FF6B00]">Excel</span>
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              RaceTrckr provides all the tools you need to track your progress, find races, and achieve your running goals.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Feature 1 */}
+            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+              <div className="bg-[#FF6B00]/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
+                <TrendingUp className="w-8 h-8 text-[#FF6B00]" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">Track Your Progress</h3>
+              <p className="text-gray-600">
+                Monitor your race statistics, total distance, and time on feet. Watch your progress grow with every run.
+              </p>
+            </div>
+
+            {/* Feature 2 */}
+            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+              <div className="bg-[#FF6B00]/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
+                <MapPin className="w-8 h-8 text-[#FF6B00]" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">Discover Races</h3>
+              <p className="text-gray-600">
+                Find upcoming running events in your area. Filter by distance, date, and location to find your perfect race.
+              </p>
+            </div>
+
+            {/* Feature 3 */}
+            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+              <div className="bg-[#FF6B00]/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
+                <Calendar className="w-8 h-8 text-[#FF6B00]" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">Race Calendar</h3>
+              <p className="text-gray-600">
+                Keep track of your upcoming races with our integrated calendar. Never miss a race day again.
+              </p>
+            </div>
+
+            {/* Feature 4 */}
+            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+              <div className="bg-[#FF6B00]/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
+                <Timer className="w-8 h-8 text-[#FF6B00]" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">Countdown Timers</h3>
+              <p className="text-gray-600">
+                Stay motivated with countdown timers for your next race. Build anticipation and stay focused on your goals.
+              </p>
+            </div>
+
+            {/* Feature 5 */}
+            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+              <div className="bg-[#FF6B00]/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
+                <Award className="w-8 h-8 text-[#FF6B00]" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">Personal Bests</h3>
+              <p className="text-gray-600">
+                Track your personal records across all distances. Celebrate your achievements and set new goals.
+              </p>
+            </div>
+
+            {/* Feature 6 */}
+            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+              <div className="bg-[#FF6B00]/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
+                <Trophy className="w-8 h-8 text-[#FF6B00]" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-4">Best Efforts</h3>
+              <p className="text-gray-600">
+                View your best performances across different race distances and track your improvement over time.
+              </p>
             </div>
           </div>
         </div>
