@@ -224,6 +224,71 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* How It Works Section */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              How It <span className="text-[#FF6B00]">Works</span>
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Get started with RaceTrckr in three simple steps
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="text-center">
+              <div className="bg-[#FF6B00] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+                1
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Create Your Profile</h3>
+              <p className="text-gray-600">
+                Sign up and set up your runner profile with your basic information and running goals.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-[#FF6B00] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+                2
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Find & Add Races</h3>
+              <p className="text-gray-600">
+                Browse our race database or manually add your upcoming races and past results.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-[#FF6B00] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+                3
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Track & Improve</h3>
+              <p className="text-gray-600">
+                Monitor your progress, celebrate achievements, and continuously improve your performance.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 md:py-24 bg-gradient-to-br from-[#FF6B00] to-[#FF8C33] text-white">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Ready to Start Your Journey?
+          </h2>
+          <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+            Join thousands of runners who are already tracking their progress and achieving their goals with RaceTrckr.
+          </p>
+          <Button
+            onClick={handleGetStarted}
+            className="bg-white text-[#FF6B00] px-10 py-5 rounded-full font-semibold text-lg hover:bg-gray-50 transition-colors shadow-lg h-auto"
+            size="lg"
+          >
+            Get Started for Free
+          </Button>
+        </div>
+      </section>
     </div>
   );
 }
