@@ -251,7 +251,7 @@ export default function ProfilePage() {
               pace: '-- / km',
               race: '',
               date: '',
-              hasMedal: false,
+              hasMedal: true,
             };
           }
 
@@ -276,7 +276,7 @@ export default function ProfilePage() {
               pace: '-- / km',
               race: '',
               date: '',
-              hasMedal: false,
+              hasMedal: true,
             };
           }
 

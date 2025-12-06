@@ -60,38 +60,50 @@ export default function PersonalBest({ efforts }: PersonalBestProps) {
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 lg:gap-6 [&>*:last-child:nth-child(odd)]:col-span-2 [&>*:last-child:nth-child(odd)]:md:col-span-1">
-            {efforts.map((effort, index) => (
-          <div key={index} className="text-center">
-            {/* Medal Icon */}
-            {effort.hasMedal && (
-              <Trophy className="w-6 h-6 mx-auto mb-2 text-[#fc4c02]" />
-            )}
-            
-            {/* Distance */}
-            <div className="text-[28px] md:text-[40px] leading-none mb-2">
-              {effort.distance}
-              {effort.unit && (
-                <span className={`${effort.unit === "Marathon" || effort.unit === "KM" ? "text-[#fc4c02]" : ""}`}>
-                  {effort.unit}
-                </span>
-              )}
-            </div>
+            {efforts.map((effort, index) => {
+              const hasData = effort.time && effort.time !== '--:--:--';
+              
+              return (
+                <div key={index} className="text-center">
+                  {/* Medal Icon */}
+                  {effort.hasMedal && (
+                    <Trophy className={`w-6 h-6 mx-auto mb-2 ${hasData ? 'text-[#fc4c02]' : 'text-gray-300'}`} />
+                  )}
+                  
+                  {/* Distance */}
+                  <div className={`text-[28px] md:text-[40px] leading-none mb-2 ${hasData ? '' : 'text-gray-300'}`}>
+                    {effort.distance}
+                    {effort.unit && (
+                      <span className={`${
+                        hasData && (effort.unit === "Marathon" || effort.unit === "KM") 
+                          ? "text-[#fc4c02]" 
+                          : hasData ? "" : "text-gray-300"
+                      }`}>
+                        {effort.unit}
+                      </span>
+                    )}
+                  </div>
 
-            {/* Time */}
-            <div className="text-[20px] mb-1">{effort.time}</div>
+                  {/* Time */}
+                  <div className={`text-[20px] mb-1 ${hasData ? '' : 'text-gray-300'}`}>
+                    {effort.time}
+                  </div>
 
-            {/* Pace */}
-            <div className="text-gray-400 text-[12px] mb-1">{effort.pace}</div>
+                  {/* Pace */}
+                  <div className={`text-[12px] mb-1 ${hasData ? 'text-gray-400' : 'text-gray-300'}`}>
+                    {effort.pace}
+                  </div>
 
-            {/* Race Info */}
-            {effort.race && (
-              <>
-                <div className="text-gray-400 text-[11px]">{effort.race}</div>
-                <div className="text-gray-400 text-[11px]">{effort.date}</div>
-              </>
-            )}
-          </div>
-        ))}
+                  {/* Race Info */}
+                  {effort.race && hasData && (
+                    <>
+                      <div className="text-gray-400 text-[11px]">{effort.race}</div>
+                      <div className="text-gray-400 text-[11px]">{effort.date}</div>
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
