@@ -3,8 +3,10 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Trophy, TrendingUp, MapPin, Calendar, Timer, Award } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
 import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
+import Footer from '@/components/layout/Footer';
 
 export default function Home() {
   const router = useRouter();
@@ -63,20 +65,40 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Column - Hero Content */}
             <div className="space-y-6 lg:space-y-8">
-              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full"
+              >
                 <Trophy className="w-4 h-4" />
                 <span className="text-sm">Track. Race. Achieve.</span>
-              </div>
+              </motion.div>
               
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight"
+              >
                 Your Running Journey Starts Here
-              </h1>
+              </motion.h1>
               
-              <p className="text-lg md:text-xl text-white/90 max-w-xl">
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-lg md:text-xl text-white/90 max-w-xl"
+              >
                 Track your race progress, discover upcoming events, and celebrate your achievements with RaceTrckr - the ultimate companion for every runner.
-              </p>
+              </motion.p>
               
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex flex-col sm:flex-row gap-4 pt-4"
+              >
                 <Button
                   onClick={handleGetStarted}
                   className="bg-white text-[#FF6B00] px-8 py-4 rounded-full font-semibold hover:bg-gray-50 transition-colors shadow-lg h-auto"
@@ -91,10 +113,15 @@ export default function Home() {
                 >
                   Learn More
                 </Button>
-              </div>
+              </motion.div>
               
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/20">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="grid grid-cols-3 gap-6 pt-8 border-t border-white/20"
+              >
                 <div>
                   <div className="text-3xl md:text-4xl font-bold">10K+</div>
                   <div className="text-white/80 text-sm mt-1">Active Runners</div>
@@ -107,11 +134,16 @@ export default function Home() {
                   <div className="text-3xl md:text-4xl font-bold">200+</div>
                   <div className="text-white/80 text-sm mt-1">Cities</div>
                 </div>
-              </div>
+              </motion.div>
             </div>
             
             {/* Right Column - Hero Image */}
-            <div className="hidden lg:block">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="hidden lg:block"
+            >
               <div className="relative">
                 <div className="absolute -inset-4 bg-white/20 rounded-3xl blur-2xl"></div>
                 <div className="relative bg-white rounded-3xl shadow-2xl p-8">
@@ -138,7 +170,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -146,18 +178,42 @@ export default function Home() {
       {/* Features Section */}
       <section className="py-16 md:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               Everything You Need to <span className="text-[#FF6B00]">Excel</span>
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
               RaceTrckr provides all the tools you need to track your progress, find races, and achieve your running goals.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
             {/* Feature 1 */}
-            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow"
+            >
               <div className="bg-[#FF6B00]/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
                 <TrendingUp className="w-8 h-8 text-[#FF6B00]" />
               </div>
@@ -165,10 +221,16 @@ export default function Home() {
               <p className="text-gray-600">
                 Monitor your race statistics, total distance, and time on feet. Watch your progress grow with every run.
               </p>
-            </div>
+            </motion.div>
 
             {/* Feature 2 */}
-            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow"
+            >
               <div className="bg-[#FF6B00]/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
                 <MapPin className="w-8 h-8 text-[#FF6B00]" />
               </div>
@@ -176,10 +238,16 @@ export default function Home() {
               <p className="text-gray-600">
                 Find upcoming running events in your area. Filter by distance, date, and location to find your perfect race.
               </p>
-            </div>
+            </motion.div>
 
             {/* Feature 3 */}
-            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow"
+            >
               <div className="bg-[#FF6B00]/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
                 <Calendar className="w-8 h-8 text-[#FF6B00]" />
               </div>
@@ -187,10 +255,16 @@ export default function Home() {
               <p className="text-gray-600">
                 Keep track of your upcoming races with our integrated calendar. Never miss a race day again.
               </p>
-            </div>
+            </motion.div>
 
             {/* Feature 4 */}
-            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow"
+            >
               <div className="bg-[#FF6B00]/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
                 <Timer className="w-8 h-8 text-[#FF6B00]" />
               </div>
@@ -198,10 +272,16 @@ export default function Home() {
               <p className="text-gray-600">
                 Stay motivated with countdown timers for your next race. Build anticipation and stay focused on your goals.
               </p>
-            </div>
+            </motion.div>
 
             {/* Feature 5 */}
-            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow"
+            >
               <div className="bg-[#FF6B00]/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
                 <Award className="w-8 h-8 text-[#FF6B00]" />
               </div>
@@ -209,10 +289,16 @@ export default function Home() {
               <p className="text-gray-600">
                 Track your personal records across all distances. Celebrate your achievements and set new goals.
               </p>
-            </div>
+            </motion.div>
 
             {/* Feature 6 */}
-            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-shadow"
+            >
               <div className="bg-[#FF6B00]/10 w-16 h-16 rounded-2xl flex items-center justify-center mb-6">
                 <Trophy className="w-8 h-8 text-[#FF6B00]" />
               </div>
@@ -220,25 +306,49 @@ export default function Home() {
               <p className="text-gray-600">
                 View your best performances across different race distances and track your improvement over time.
               </p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* How It Works Section */}
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               How It <span className="text-[#FF6B00]">Works</span>
             </h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
               Get started with RaceTrckr in three simple steps
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="text-center">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.15
+                }
+              }
+            }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-12"
+          >
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 30 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="text-center"
+            >
               <div className="bg-[#FF6B00] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
                 1
               </div>
@@ -246,9 +356,15 @@ export default function Home() {
               <p className="text-gray-600">
                 Sign up and set up your runner profile with your basic information and running goals.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="text-center">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 30 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="text-center"
+            >
               <div className="bg-[#FF6B00] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
                 2
               </div>
@@ -256,9 +372,15 @@ export default function Home() {
               <p className="text-gray-600">
                 Browse our race database or manually add your upcoming races and past results.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="text-center">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 30 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="text-center"
+            >
               <div className="bg-[#FF6B00] text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
                 3
               </div>
@@ -266,14 +388,20 @@ export default function Home() {
               <p className="text-gray-600">
                 Monitor your progress, celebrate achievements, and continuously improve your performance.
               </p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-16 md:py-24 bg-gradient-to-br from-[#FF6B00] to-[#FF8C33] text-white">
-        <div className="max-w-4xl mx-auto px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="max-w-4xl mx-auto px-6 text-center"
+        >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Ready to Start Your Journey?
           </h2>
@@ -287,8 +415,11 @@ export default function Home() {
           >
             Get Started for Free
           </Button>
-        </div>
+        </motion.div>
       </section>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
