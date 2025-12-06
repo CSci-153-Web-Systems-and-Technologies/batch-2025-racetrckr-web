@@ -1,15 +1,38 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Trophy, TrendingUp, MapPin, Calendar, Timer, Award } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
 import { ImageWithFallback } from '@/components/figma/ImageWithFallback';
+import DisplayCards from '@/components/ui/display-cards';
+import { createClient } from '@/lib/supabase';
 import Footer from '@/components/layout/Footer';
 
 export default function Home() {
   const router = useRouter();
+  const [events, setEvents] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fetchEvents() {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('events')
+        .select('id, title, event_date, city_municipality, province, cover_image_url')
+        .eq('is_active', true)
+        .gte('event_date', new Date().toISOString().split('T')[0])
+        .order('event_date', { ascending: true })
+        .limit(3);
+
+      if (data) {
+        setEvents(data);
+      }
+    }
+
+    fetchEvents();
+  }, []);
 
   const handleGetStarted = () => {
     router.push('/signup');
@@ -18,6 +41,24 @@ export default function Home() {
   const handleLogin = () => {
     router.push('/login');
   };
+
+  const eventCards = events.map((event, index) => ({
+    icon: <Calendar className="size-4 text-gray-300 group-hover:text-orange-300 transition-colors duration-300" />,
+    title: event.title,
+    description: `${event.city_municipality}, ${event.province}`,
+    date: new Date(event.event_date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    }),
+    coverImage: event.cover_image_url,
+    iconClassName: "bg-gray-900 group-hover:bg-orange-900 transition-colors duration-300",
+    className: index === 0
+      ? "[grid-area:stack] hover:-translate-y-10 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration:700 hover:grayscale-0 before:left-0 before:top-0"
+      : index === 1
+      ? "[grid-area:stack] translate-x-12 translate-y-10 hover:-translate-y-1 before:absolute before:w-[100%] before:outline-1 before:rounded-xl before:outline-border before:h-[100%] before:content-[''] before:bg-blend-overlay before:bg-background/50 grayscale-[100%] hover:before:opacity-0 before:transition-opacity before:duration:700 hover:grayscale-0 before:left-0 before:top-0"
+      : "[grid-area:stack] translate-x-24 translate-y-20 hover:translate-y-10"
+  }));
 
   return (
     <div className="min-h-screen bg-white">
@@ -137,39 +178,21 @@ export default function Home() {
               </motion.div>
             </div>
             
-            {/* Right Column - Hero Image */}
+            {/* Right Column - Upcoming Events Cards */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="hidden lg:block"
+              className="hidden lg:flex items-center justify-center"
             >
-              <div className="relative">
-                <div className="absolute -inset-4 bg-white/20 rounded-3xl blur-2xl"></div>
-                <div className="relative bg-white rounded-3xl shadow-2xl p-8">
-                  <div className="relative w-full h-96 rounded-2xl overflow-hidden">
-                    <ImageWithFallback
-                      src="https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=800&auto=format&fit=crop"
-                      alt="Runner crossing finish line"
-                      className="w-full h-full"
-                      priority
-                    />
-                  </div>
-                  
-                  {/* Floating Stats Card */}
-                  <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl p-6">
-                    <div className="flex items-center gap-4">
-                      <div className="bg-[#FF6B00] p-3 rounded-xl">
-                        <Trophy className="w-6 h-6 text-white" />
-                      </div>
-                      <div>
-                        <div className="text-2xl font-bold text-gray-900">42.2 km</div>
-                        <div className="text-sm text-gray-500">Personal Best</div>
-                      </div>
-                    </div>
-                  </div>
+              {events.length > 0 ? (
+                <DisplayCards cards={eventCards} />
+              ) : (
+                <div className="text-center text-white/80">
+                  <Calendar className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                  <p className="text-lg">Loading upcoming events...</p>
                 </div>
-              </div>
+              )}
             </motion.div>
           </div>
         </div>
