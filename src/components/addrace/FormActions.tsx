@@ -8,19 +8,19 @@ interface FormActionsProps {
 
 export default function FormActions({ handleReset, isSubmitting = false }: FormActionsProps) {
   return (
-    <div className="grid grid-cols-2 gap-4 pt-4">
+    <div className="flex gap-4 pt-4">
       <Button
         type="button"
         onClick={handleReset}
         variant="outline"
-        className="w-full py-3 bg-gray-400 hover:bg-gray-500 text-white border-0"
+        className="flex-1"
         disabled={isSubmitting}
       >
         Reset
       </Button>
       <Button
         type="submit"
-        className="w-full py-3 bg-black hover:bg-gray-800 text-white"
+        className="flex-1 bg-[#fc4c02] hover:bg-[#e64402]"
         disabled={isSubmitting}
       >
         {isSubmitting ? (
