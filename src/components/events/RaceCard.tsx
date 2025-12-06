@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { Calendar, MapPin, Users } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { createClient } from '@/lib/supabase';
-import { Toast } from '@/components/ui/toast';
+import EventDetailsModal from './EventDetailsModal';
 
 interface RaceCardProps {
   id: string;
@@ -11,149 +12,118 @@ interface RaceCardProps {
   description: string;
   imageUrl: string;
   distances: string[];
+  date: string;
+  location: string;
+  organizer: string;
+  registrationUrl: string;
 }
 
-export default function RaceCard({ id, title, description, imageUrl, distances }: RaceCardProps) {
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [selectedDistance, setSelectedDistance] = useState<string | null>(null);
-  const [showDistanceModal, setShowDistanceModal] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+export default function RaceCard({ 
+  id, 
+  title, 
+  description, 
+  imageUrl, 
+  distances, 
+  date, 
+  location, 
+  organizer, 
+  registrationUrl 
+}: RaceCardProps) {
+  const [showModal, setShowModal] = useState(false);
 
-  const handleRegister = async (distance: string) => {
-    try {
-      setIsRegistering(true);
-      const supabase = createClient();
-
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setToast({ message: 'Please login to register for events', type: 'error' });
-        return;
-      }
-
-      // Check if already registered
-      const { data: existing } = await supabase
-        .from('user_events')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('event_id', id)
-        .single();
-
-      if (existing) {
-        setToast({ message: 'You are already registered for this event!', type: 'info' });
-        return;
-      }
-
-      // Register for event
-      const { error } = await supabase
-        .from('user_events')
-        .insert([
-          {
-            user_id: user.id,
-            event_id: id,
-            registered_distance: distance,
-            registration_status: 'registered'
-          }
-        ]);
-
-      if (error) {
-        console.error('Error registering for event:', error);
-        setToast({ message: 'Failed to register. Please try again.', type: 'error' });
-        return;
-      }
-
-      setToast({ message: `Successfully registered for ${distance}!`, type: 'success' });
-      setShowDistanceModal(false);
-    } catch (err) {
-      console.error('Unexpected error:', err);
-      setToast({ message: 'An unexpected error occurred.', type: 'error' });
-    } finally {
-      setIsRegistering(false);
-    }
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
-  const handleRegisterClick = () => {
-    if (distances.length === 1) {
-      handleRegister(distances[0]);
-    } else {
-      setShowDistanceModal(true);
-    }
-  };
+  // Show only first 3 distances with "+X more" indicator
+  const displayDistances = distances.slice(0, 3);
+  const remainingCount = distances.length - 3;
+
   return (
     <>
-      <div className="bg-white rounded-lg border border-[#fc4c02]/31 overflow-hidden hover:shadow-lg transition-shadow">
-        <div className="p-4 pb-3">
-          <h3 className="text-lg font-semibold mb-1">{title}</h3>
-          <p className="text-gray-500 text-sm mb-3">{description}</p>
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-all hover:border-[#fc4c02]/50 flex flex-col h-full">
+        {/* Image */}
+        <div className="relative w-full h-48 bg-gray-200">
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
         </div>
-        
-        <div className="px-4 pb-4">
-          <div className="aspect-[4/3] w-full overflow-hidden rounded-md mb-4">
-            <img
-              src={imageUrl}
-              alt={title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex gap-2 flex-wrap">
-              {distances.map((distance) => (
-                <span
-                  key={distance}
-                  className="px-3 py-1 bg-gray-100 rounded-full text-sm"
-                >
-                  {distance}
-                </span>
-              ))}
+
+        {/* Content */}
+        <div className="p-4 flex flex-col flex-grow">
+          {/* Title */}
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+
+          {/* Description with line clamp */}
+          <p className="text-gray-600 text-sm mb-4 line-clamp-2">{description}</p>
+
+          {/* Event Info */}
+          <div className="space-y-2 mb-4 text-sm">
+            <div className="flex items-center gap-2 text-gray-600">
+              <Calendar className="w-4 h-4 text-[#fc4c02]" />
+              <span>{formatDate(date)}</span>
             </div>
-            <Button 
-              onClick={handleRegisterClick}
-              disabled={isRegistering}
-              className="bg-[#fc4c02] hover:bg-[#fc4c02]/90 text-white whitespace-nowrap"
+            <div className="flex items-center gap-2 text-gray-600">
+              <MapPin className="w-4 h-4 text-[#fc4c02]" />
+              <span>{location}</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600">
+              <Users className="w-4 h-4 text-[#fc4c02]" />
+              <span>{organizer}</span>
+            </div>
+          </div>
+
+          {/* Distances */}
+          <div className="flex gap-2 flex-wrap mb-4">
+            {displayDistances.map((distance) => (
+              <span
+                key={distance}
+                className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium"
+              >
+                {distance}
+              </span>
+            ))}
+            {remainingCount > 0 && (
+              <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">
+                +{remainingCount} more
+              </span>
+            )}
+          </div>
+
+          {/* View Details Button - pushed to bottom */}
+          <div className="mt-auto">
+            <Button
+              onClick={() => setShowModal(true)}
+              className="w-full bg-[#fc4c02] hover:bg-orange-600 text-white"
             >
-              {isRegistering ? 'Registering...' : 'Register'}
+              View Details
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Distance Selection Modal */}
-      {showDistanceModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">Select Distance</h3>
-            <p className="text-gray-600 mb-4">Choose the distance you want to register for:</p>
-            <div className="space-y-2">
-              {distances.map((distance) => (
-                <button
-                  key={distance}
-                  onClick={() => handleRegister(distance)}
-                  disabled={isRegistering}
-                  className="w-full p-3 border border-gray-300 rounded-lg hover:border-[#fc4c02] hover:bg-orange-50 transition-colors text-left font-medium disabled:opacity-50"
-                >
-                  {distance}
-                </button>
-              ))}
-            </div>
-            <button
-              onClick={() => setShowDistanceModal(false)}
-              className="mt-4 w-full p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Toast Notification */}
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
+      {/* Event Details Modal */}
+      <EventDetailsModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        event={{
+          id,
+          title,
+          description,
+          cover_image_url: imageUrl,
+          event_date: date,
+          city_municipality: location.split(',')[0].trim(),
+          province: location.split(',')[1]?.trim() || location,
+          available_distances: distances,
+          organizer,
+          registration_url: registrationUrl,
+        }}
+      />
     </>
   );
 }

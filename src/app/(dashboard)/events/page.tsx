@@ -114,12 +114,20 @@ export default function EventsPage() {
     description: string;
     imageUrl: string;
     distances: string[];
+    date: string;
+    location: string;
+    organizer: string;
+    registrationUrl: string;
   }> = filteredEvents.map((event) => ({
     id: event.id,
     title: event.title,
     description: event.description || `${event.city_municipality}, ${event.province} • ${new Date(event.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`,
     imageUrl: event.cover_image_url || 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=800&q=80',
     distances: event.available_distances,
+    date: event.event_date,
+    location: `${event.city_municipality}, ${event.province}`,
+    organizer: event.organizer,
+    registrationUrl: event.registration_url,
   }));
 
   return (

@@ -6,6 +6,10 @@ interface Race {
   description: string;
   imageUrl: string;
   distances: string[];
+  date: string;
+  location: string;
+  organizer: string;
+  registrationUrl: string;
 }
 
 interface RacesGridProps {
@@ -98,6 +102,10 @@ export default function RacesGrid({ races, isFiltering, onAddEvent }: RacesGridP
                   description={race.description}
                   imageUrl={race.imageUrl}
                   distances={race.distances}
+                  date={race.date}
+                  location={race.location}
+                  organizer={race.organizer}
+                  registrationUrl={race.registrationUrl}
                 />
               ))}
             </div>
