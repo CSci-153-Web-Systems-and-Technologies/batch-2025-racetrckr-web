@@ -68,16 +68,29 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo and Brand */}
           <div className="flex items-center gap-2">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Image
-                src="/logo.svg"
-                alt="RaceTrackr Logo"
-                width={32}
-                height={32}
-                className="h-8 w-8"
-              />
-              <span className="text-xl font-semibold">RaceTrackr</span>
-            </Link>
+            {userProfile ? (
+              <div className="flex items-center gap-2 cursor-default">
+                <Image
+                  src="/logo.svg"
+                  alt="RaceTrackr Logo"
+                  width={32}
+                  height={32}
+                  className="h-8 w-8"
+                />
+                <span className="text-xl font-semibold">RaceTrackr</span>
+              </div>
+            ) : (
+              <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <Image
+                  src="/logo.svg"
+                  alt="RaceTrackr Logo"
+                  width={32}
+                  height={32}
+                  className="h-8 w-8"
+                />
+                <span className="text-xl font-semibold">RaceTrackr</span>
+              </Link>
+            )}
           </div>
 
           {/* Desktop Navigation */}

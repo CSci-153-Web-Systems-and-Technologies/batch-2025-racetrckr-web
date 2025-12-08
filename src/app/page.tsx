@@ -16,8 +16,19 @@ export default function Home() {
   const [events, setEvents] = useState<any[]>([]);
 
   useEffect(() => {
-    async function fetchEvents() {
+    async function checkAuthAndFetchEvents() {
       const supabase = createClient();
+      
+      // Check if user is logged in
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        // Redirect to dashboard if logged in
+        router.push('/dashboard');
+        return;
+      }
+
+      // Fetch events only if not logged in
       const { data, error } = await supabase
         .from('events')
         .select('id, title, event_date, city_municipality, province, cover_image_url')
@@ -31,8 +42,8 @@ export default function Home() {
       }
     }
 
-    fetchEvents();
-  }, []);
+    checkAuthAndFetchEvents();
+  }, [router]);
 
   const handleGetStarted = () => {
     router.push('/signup');
