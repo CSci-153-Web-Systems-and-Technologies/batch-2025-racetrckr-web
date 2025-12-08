@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Trophy, Share2, Calendar, Plus } from "lucide-react";
+import { Trophy, Calendar, Plus } from "lucide-react";
 
 interface BestEffort {
   distance: string;
@@ -23,15 +23,6 @@ export default function PersonalBest({ efforts }: PersonalBestProps) {
       <h2 className="text-3xl font-bold mb-6">Personal Best</h2>
       
       <div className="bg-white rounded-3xl border border-[#fc4c02]/31 shadow-sm p-8 relative">
-        {/* Share Icon */}
-        {hasAnyEffort && (
-          <div className="absolute top-6 right-6">
-            <button className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-              <Share2 className="w-5 h-5 text-gray-600" />
-            </button>
-          </div>
-        )}
-
         {!hasAnyEffort ? (
           <div className="text-center py-4">
             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
