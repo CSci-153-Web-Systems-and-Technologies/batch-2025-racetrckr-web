@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import AuthStatus from "@/components/auth/shared/AuthStatus";
 import { SessionManager } from "@/components/auth/shared/SessionManager";
 import { Toaster } from "sonner";
 
@@ -21,7 +20,6 @@ export default function RootLayout({
           {children}
         </SessionManager>
         <Toaster position="top-right" richColors />
-        <AuthStatus />
       </body>
     </html>
   );
