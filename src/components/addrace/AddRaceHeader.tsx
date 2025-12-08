@@ -3,7 +3,7 @@ export default function AddRaceHeader() {
     <div className="text-center mb-8">
       <h1 className="text-4xl font-bold mb-2">Add Race</h1>
       <p className="text-gray-500 text-sm">
-        You are currently on the free plan. Upgrade to the pro plan to get access to all features.
+        Log your completed race with detailed performance metrics and location information.
       </p>
     </div>
   );

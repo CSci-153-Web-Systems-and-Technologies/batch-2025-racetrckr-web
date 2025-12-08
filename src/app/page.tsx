@@ -213,7 +213,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold mb-4">Track Your Progress</h3>
               <p className="text-gray-600">
-                Monitor your race statistics, total distance, and time on feet. Watch your progress grow with every run.
+                Comprehensive race analytics with detailed statistics including total distance covered, time on feet, and performance metrics across all your runs.
               </p>
             </motion.div>
 
@@ -230,7 +230,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold mb-4">Discover Races</h3>
               <p className="text-gray-600">
-                Find upcoming running events in your area. Filter by distance, date, and location to find your perfect race.
+                Access a curated database of running events nationwide. Advanced filtering by distance, date, and location helps you find races that match your goals.
               </p>
             </motion.div>
 
@@ -247,7 +247,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold mb-4">Race Calendar</h3>
               <p className="text-gray-600">
-                Keep track of your upcoming races with our integrated calendar. Never miss a race day again.
+                Integrated calendar system to organize and manage your racing schedule. Automated reminders ensure you're always prepared for race day.
               </p>
             </motion.div>
 
@@ -264,7 +264,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold mb-4">Countdown Timers</h3>
               <p className="text-gray-600">
-                Stay motivated with countdown timers for your next race. Build anticipation and stay focused on your goals.
+                Real-time countdown timers for registered events help maintain motivation and focus. Strategic preparation tools to optimize race-day performance.
               </p>
             </motion.div>
 
@@ -281,7 +281,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold mb-4">Personal Bests</h3>
               <p className="text-gray-600">
-                Track your personal records across all distances. Celebrate your achievements and set new goals.
+                Automatic tracking of personal records across all race distances. Historical performance data enables goal-setting and milestone achievement.
               </p>
             </motion.div>
 
@@ -298,7 +298,7 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-semibold mb-4">Best Efforts</h3>
               <p className="text-gray-600">
-                View your best performances across different race distances and track your improvement over time.
+                Advanced performance analytics showcasing top results across standard race distances. Data-driven insights to track improvement and identify training opportunities.
               </p>
             </motion.div>
           </motion.div>
@@ -348,7 +348,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold mb-3">Create Your Profile</h3>
               <p className="text-gray-600">
-                Sign up and set up your runner profile with your basic information and running goals.
+                Register and build your personalized runner profile with demographic information, training history, and performance objectives.
               </p>
             </motion.div>
 
@@ -364,7 +364,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold mb-3">Find & Add Races</h3>
               <p className="text-gray-600">
-                Browse our race database or manually add your upcoming races and past results.
+                Search our comprehensive event database or manually log upcoming races and historical results with detailed race information and performance metrics.
               </p>
             </motion.div>
 
@@ -380,7 +380,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-semibold mb-3">Track & Improve</h3>
               <p className="text-gray-600">
-                Monitor your progress, celebrate achievements, and continuously improve your performance.
+                Leverage data-driven insights to monitor progress, recognize achievements, and implement continuous performance improvement strategies.
               </p>
             </motion.div>
           </motion.div>
