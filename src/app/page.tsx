@@ -103,14 +103,14 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/10"></div>
         
         <div className="relative max-w-7xl mx-auto px-6 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className={`grid gap-12 items-center ${events.length >= 3 ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
             {/* Left Column - Hero Content */}
-            <div className="space-y-3 lg:space-y-4">
+            <div className={`space-y-3 lg:space-y-4 ${events.length < 3 ? 'text-center max-w-3xl mx-auto' : ''}`}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full"
+                className={`inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full ${events.length < 3 ? 'mx-auto' : ''}`}
               >
                 <Trophy className="w-4 h-4" />
                 <span className="text-sm">Track. Race. Achieve.</span>
@@ -138,7 +138,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="pt-2"
+                className={`pt-2 ${events.length < 3 ? 'flex justify-center' : ''}`}
               >
                 <Button
                   onClick={handleGetStarted}
@@ -150,21 +150,16 @@ export default function Home() {
             </div>
             
             {/* Right Column - Upcoming Events Cards */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="hidden lg:flex items-center justify-center"
-            >
-              {events.length > 0 ? (
+            {events.length >= 3 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="hidden lg:flex items-center justify-center"
+              >
                 <DisplayCards cards={eventCards} />
-              ) : (
-                <div className="text-center text-white/80">
-                  <Calendar className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg">Loading upcoming events...</p>
-                </div>
-              )}
-            </motion.div>
+              </motion.div>
+            )}
           </div>
         </div>
       </section>

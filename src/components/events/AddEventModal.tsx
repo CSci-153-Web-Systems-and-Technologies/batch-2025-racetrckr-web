@@ -98,6 +98,17 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }: AddEventModalProps) =>
     setIsSubmitting(true);
     setSubmitError(null);
 
+    // Validate event date is not in the past
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const eventDate = new Date(formData.date);
+    
+    if (eventDate < today) {
+      setSubmitError('Event date cannot be in the past. Please select a future date.');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const supabase = createClient();
 

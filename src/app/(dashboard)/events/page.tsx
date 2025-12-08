@@ -46,7 +46,6 @@ export default function EventsPage() {
       setLoading(true);
       setError(null);
       const supabase = createClient();
-
       const today = new Date().toISOString().split('T')[0];
 
       // Fetch active events ordered by date
