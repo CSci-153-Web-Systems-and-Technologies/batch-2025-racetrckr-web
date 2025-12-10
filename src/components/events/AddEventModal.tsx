@@ -101,6 +101,43 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }: AddEventModalProps) =>
     setIsSubmitting(true);
     setSubmitError(null);
 
+    // Validate required fields
+    if (!formData.name.trim()) {
+      toast.error('Event name is required');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!formData.date) {
+      toast.error('Event date is required');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!formData.province || !formData.cityMunicipality) {
+      toast.error('Location is required');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (selectedDistances.length === 0) {
+      toast.error('Please select at least one distance');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!registrationLink.trim()) {
+      toast.error('Registration link is required');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!coverPhotoFile) {
+      toast.error('Cover photo is required');
+      setIsSubmitting(false);
+      return;
+    }
+
     // Validate captcha
     if (!captchaToken) {
       toast.error('Please complete the CAPTCHA verification');
@@ -121,16 +158,27 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }: AddEventModalProps) =>
 
     try {
       // Verify captcha with API
+      console.log('Verifying captcha token:', captchaToken);
       const verifyResponse = await fetch('/api/verify-turnstile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: captchaToken }),
       });
 
+      if (!verifyResponse.ok) {
+        console.error('Verification response not ok:', verifyResponse.status);
+        toast.error('CAPTCHA verification failed. Please try again.');
+        setCaptchaToken('');
+        setIsSubmitting(false);
+        return;
+      }
+
       const verifyData = await verifyResponse.json();
+      console.log('Verification result:', verifyData);
 
       if (!verifyData.success) {
-        toast.error('CAPTCHA verification failed. Please try again.');
+        console.error('Verification failed:', verifyData);
+        toast.error(`CAPTCHA verification failed: ${verifyData['error-codes']?.join(', ') || 'Unknown error'}`);
         setCaptchaToken('');
         setIsSubmitting(false);
         return;
