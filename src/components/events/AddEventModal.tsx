@@ -7,6 +7,8 @@ import NameDateFields from '@/components/addrace/NameDateFields';
 import AddressFields from '@/components/addrace/AddressFields';
 import CoverPhotoField from '@/components/addrace/CoverPhotoField';
 import { createClient } from '@/lib/supabase';
+import { Turnstile } from '@marsidev/react-turnstile';
+import { toast } from 'sonner';
 
 interface AddEventModalProps {
   isOpen: boolean;
@@ -32,6 +34,7 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }: AddEventModalProps) =>
   const [organizer, setOrganizer] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string>('');
 
   const distances = [
     'Marathon',
@@ -98,6 +101,13 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }: AddEventModalProps) =>
     setIsSubmitting(true);
     setSubmitError(null);
 
+    // Validate captcha
+    if (!captchaToken) {
+      toast.error('Please complete the CAPTCHA verification');
+      setIsSubmitting(false);
+      return;
+    }
+
     // Validate event date is not in the past
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -110,6 +120,22 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }: AddEventModalProps) =>
     }
 
     try {
+      // Verify captcha with API
+      const verifyResponse = await fetch('/api/verify-turnstile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: captchaToken }),
+      });
+
+      const verifyData = await verifyResponse.json();
+
+      if (!verifyData.success) {
+        toast.error('CAPTCHA verification failed. Please try again.');
+        setCaptchaToken('');
+        setIsSubmitting(false);
+        return;
+      }
+
       const supabase = createClient();
 
       // Get current user
@@ -217,6 +243,7 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }: AddEventModalProps) =>
     setCoverPhotoPreview(null);
     setOrganizer('');
     setSubmitError(null);
+    setCaptchaToken('');
   };
 
   if (!isOpen) return null;
@@ -327,6 +354,19 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded }: AddEventModalProps) =>
               placeholder="Tell us more about this event..."
               rows={4}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc4c02] resize-none"
+            />
+          </div>
+
+          {/* CAPTCHA */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Verification <span className="text-red-500">*</span>
+            </label>
+            <Turnstile
+              siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY!}
+              onSuccess={(token) => setCaptchaToken(token)}
+              onError={() => setCaptchaToken('')}
+              onExpire={() => setCaptchaToken('')}
             />
           </div>
 
