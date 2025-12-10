@@ -12,6 +12,7 @@ import FinishTimeFields from '@/components/addrace/FinishTimeFields';
 import CoverPhotoField from '@/components/addrace/CoverPhotoField';
 import NotesField from '@/components/addrace/NotesField';
 import FormActions from '@/components/addrace/FormActions';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 export default function AddRacePage() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function AddRacePage() {
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [coverPhoto, setCoverPhoto] = useState<File | null>(null);
   const [coverPhotoPreview, setCoverPhotoPreview] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string>('');
   const [formData, setFormData] = useState({
     name: '',
     province: '',
@@ -146,6 +148,7 @@ export default function AddRacePage() {
     });
     setCoverPhoto(null);
     setCoverPhotoPreview(null);
+    setCaptchaToken('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -153,6 +156,12 @@ export default function AddRacePage() {
     
     if (!userId) {
       toast.error('Please log in to add a race');
+      return;
+    }
+
+    // Validate captcha
+    if (!captchaToken) {
+      toast.error('Please complete the CAPTCHA verification');
       return;
     }
 
@@ -177,6 +186,22 @@ export default function AddRacePage() {
     setIsSubmitting(true);
 
     try {
+      // Verify captcha with API
+      const verifyResponse = await fetch('/api/verify-turnstile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: captchaToken }),
+      });
+
+      const verifyData = await verifyResponse.json();
+
+      if (!verifyData.success) {
+        toast.error('CAPTCHA verification failed. Please try again.');
+        setCaptchaToken('');
+        setIsSubmitting(false);
+        return;
+      }
+
       const supabase = createClient();
       let coverPhotoUrl: string | null = null;
 
@@ -313,6 +338,19 @@ export default function AddRacePage() {
               value={formData.notes} 
               handleInputChange={handleInputChange} 
             />
+
+            {/* CAPTCHA */}
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Verification <span className="text-red-500">*</span>
+              </label>
+              <Turnstile
+                siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY!}
+                onSuccess={(token) => setCaptchaToken(token)}
+                onError={() => setCaptchaToken('')}
+                onExpire={() => setCaptchaToken('')}
+              />
+            </div>
 
             <FormActions handleReset={handleReset} isSubmitting={isSubmitting} />
           </form>
