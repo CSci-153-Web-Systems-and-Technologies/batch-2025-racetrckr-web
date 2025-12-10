@@ -344,12 +344,19 @@ export default function AddRacePage() {
               <label className="block text-sm font-medium mb-2">
                 Verification <span className="text-red-500">*</span>
               </label>
-              <Turnstile
-                siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY!}
-                onSuccess={(token) => setCaptchaToken(token)}
-                onError={() => setCaptchaToken('')}
-                onExpire={() => setCaptchaToken('')}
-              />
+              <div className="flex justify-center">
+                {typeof window !== 'undefined' && (
+                  <Turnstile
+                    siteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY || '0x4AAAAAACFwe3721_--ZQ-v'}
+                    onSuccess={(token) => setCaptchaToken(token)}
+                    onError={(error) => {
+                      console.error('Turnstile error:', error);
+                      setCaptchaToken('');
+                    }}
+                    onExpire={() => setCaptchaToken('')}
+                  />
+                )}
+              </div>
             </div>
 
             <FormActions handleReset={handleReset} isSubmitting={isSubmitting} />
