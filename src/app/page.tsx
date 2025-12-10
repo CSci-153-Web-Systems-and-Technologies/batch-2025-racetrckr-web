@@ -110,12 +110,12 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-[#FF6B00] to-[#FF8C33] text-white overflow-hidden min-h-screen flex items-start pt-16 lg:pt-24">
+      <section className="relative bg-gradient-to-br from-[#FF6B00] to-[#FF8C33] text-white overflow-hidden min-h-[85vh] md:min-h-[90vh] lg:min-h-screen flex items-start pt-12 md:pt-16 lg:pt-24 pb-12 md:pb-16 lg:pb-0">
         <div className="absolute inset-0 bg-black/10"></div>
         
         <div className="relative max-w-7xl mx-auto px-6 w-full">
-          <div className={`grid gap-12 items-center ${events.length >= 3 ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
-            {/* Left Column - Hero Content */}
+          <div className={`flex flex-col ${events.length >= 3 ? 'lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center' : ''}`}>
+            {/* Hero Content */}
             <div className={`space-y-3 lg:space-y-4 ${events.length < 3 ? 'text-center max-w-3xl mx-auto' : ''}`}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -149,7 +149,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className={`pt-2 ${events.length < 3 ? 'flex justify-center' : ''}`}
+                className={`pt-2 pb-8 md:pb-10 lg:pb-0 ${events.length < 3 ? 'flex justify-center' : ''}`}
               >
                 <Button
                   onClick={handleGetStarted}
@@ -160,13 +160,13 @@ export default function Home() {
               </motion.div>
             </div>
             
-            {/* Right Column - Upcoming Events Cards */}
+            {/* Event Cards - Show below content on mobile/tablet, side on desktop */}
             {events.length >= 3 && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="hidden lg:flex items-center justify-center"
+                className="flex items-center justify-center scale-90 md:scale-100 lg:scale-100"
               >
                 <DisplayCards cards={eventCards} />
               </motion.div>
