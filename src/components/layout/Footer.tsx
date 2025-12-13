@@ -29,7 +29,7 @@ export default function Footer() {
               <Github className="h-5 w-5" />
             </a>
             <a
-              href="https://facebook.com" 
+              href="https://www.facebook.com/jaaseia" 
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-[#fc4c02] transition-colors"
@@ -37,7 +37,7 @@ export default function Footer() {
               <Facebook className="h-5 w-5" />
             </a>
             <a
-              href="https://linkedin.com/jaaseia" 
+              href="www.linkedin.com/in/jaaseia" 
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-[#fc4c02] transition-colors"

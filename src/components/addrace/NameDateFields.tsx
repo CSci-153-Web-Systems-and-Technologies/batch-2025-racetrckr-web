@@ -27,7 +27,7 @@ export default function NameDateFields({ formData, handleInputChange }: NameDate
           name="name"
           value={formData.name}
           onChange={handleInputChange}
-          placeholder="Evil Rabbit"
+          placeholder="Race name"
           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#fc4c02] focus:border-transparent"
         />
       </div>

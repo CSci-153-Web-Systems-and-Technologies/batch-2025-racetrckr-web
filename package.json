@@ -20,6 +20,7 @@
     "lucide-react": "^0.547.0",
     "motion": "^12.23.25",
     "next": "^16.0.7",
+    "nextjs-toploader": "^3.9.17",
     "postcss": "^8.5.6",
     "react": "^19.0.1",
     "react-day-picker": "^9.11.1",

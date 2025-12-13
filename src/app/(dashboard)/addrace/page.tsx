@@ -159,12 +159,6 @@ export default function AddRacePage() {
       return;
     }
 
-    // Validate captcha
-    if (!captchaToken) {
-      toast.error('Please complete the CAPTCHA verification');
-      return;
-    }
-
     // Validate required fields
     if (!formData.name.trim()) {
       toast.error('Race name is required');
@@ -183,20 +177,42 @@ export default function AddRacePage() {
       return;
     }
 
+    if (!coverPhoto) {
+      toast.error('Cover photo is required');
+      return;
+    }
+
+    // Validate captcha
+    if (!captchaToken) {
+      toast.error('Please complete the CAPTCHA verification');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       // Verify captcha with API
+      console.log('Verifying captcha token:', captchaToken);
       const verifyResponse = await fetch('/api/verify-turnstile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: captchaToken }),
       });
 
+      if (!verifyResponse.ok) {
+        console.error('Verification response not ok:', verifyResponse.status);
+        toast.error('CAPTCHA verification failed. Please try again.');
+        setCaptchaToken('');
+        setIsSubmitting(false);
+        return;
+      }
+
       const verifyData = await verifyResponse.json();
+      console.log('Verification result:', verifyData);
 
       if (!verifyData.success) {
-        toast.error('CAPTCHA verification failed. Please try again.');
+        console.error('Verification failed:', verifyData);
+        toast.error(`CAPTCHA verification failed: ${verifyData['error-codes']?.join(', ') || 'Unknown error'}`);
         setCaptchaToken('');
         setIsSubmitting(false);
         return;
