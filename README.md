@@ -329,8 +329,7 @@ This project is licensed under the MIT License.
 For issues or questions:
 - Check [SECURITY.md](./SECURITY.md) for security-related concerns
 - Review existing GitHub issues
-- Contact the development team
+- jaaseiacocabenoja@gmail.com
 
 ---
 
-**Built with ❤️ by the RaceTrckr Team**
